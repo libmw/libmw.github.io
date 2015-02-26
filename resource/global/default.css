@@ -1,0 +1,174 @@
+body{
+    padding: 0;
+    margin: 0 auto;
+    width: 996px;
+}
+body *{
+    font-family: 'microsoft yahei';
+    color: #555;
+}
+
+/*
+首页
+*/
+.post-list{
+    list-style: none;
+    text-align: center;
+}
+
+.post-list li{
+    margin: 31px 0;
+}
+
+.post-list a{
+    font-size: 48px;
+    text-decoration: none;
+}
+
+.post-list p{
+    line-height: 60px;
+    color: #888;
+    font-size: 18px;
+}
+
+.main{
+    margin: 0 100px;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    padding-bottom: 10px;
+    margin: 20px 0;
+}
+
+h1 {
+    color: #2c3437;
+    font-size: 48px;
+    text-decoration: none;
+    text-align: center;
+}
+
+h2 {
+    border-bottom: 1px solid #eee;
+    color: #333;
+    font-size: 24px;
+}
+
+h3 {
+    border-bottom: 1px solid #eee;
+    font-size: 18px;
+}
+
+h4 {
+    font-size: 16px;
+}
+
+h5 {
+    font-size: 14px;
+}
+
+h6 {
+    color: #777777;
+    background-color: inherit;
+    font-size: 14px;
+}
+
+hr {
+    height: 1px;
+    border: 0;
+    color: #CCCCCC;
+    background-color: #eee;
+}
+
+p, blockquote, ul, ol, dl, li, table, pre {
+    margin: 15px 0;
+}
+
+p{
+    line-height: 2em;
+}
+
+pre {
+    background-color: #F8F8F8;
+    overflow: auto;
+    padding: 15px;
+}
+
+pre.prettyprint{
+    border: 0 none;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+pre code {
+    background-color: #F8F8F8;
+    border: none;
+    padding: 0;
+}
+
+code {
+    color: #fe0088;
+    padding: 0 0.2em;
+    line-height: 1.5em;
+}
+
+pre > code {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+table{
+    border-radius: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #ddd;
+}
+thead, tfoot{
+    background: #eee;
+}
+th,td{
+    border: 1px solid #ddd;
+}
+tr:nth-child(even) {
+    background: #eee;
+}
+
+
+a{
+    color: #2ba6cb;
+    text-decoration: none;
+}
+::-moz-selection{background:rgba(255,255,0,0.3);color:#000}
+::selection{background:rgba(255,255,0,0.3);color:#000}
+
+a::-moz-selection{background:rgba(255,255,0,0.3);color:#0645ad}
+a::selection{background:rgba(255,255,0,0.3);color:#0645ad}
+
+blockquote{
+    color:#666666;
+    margin:0;
+    padding: 0.5em 0 0.5em 2em;
+}
+blockquote p{
+    margin: 0;
+}
+
+
+ul, ol {
+    padding: 5px 2em;
+    background-color: #F9F9F9;
+}
+li p:last-child { margin:0 }
+dd { margin: 0 0 0 2em; }
+
+img {
+    border: 0;
+    -ms-interpolation-mode: bicubic;
+    vertical-align: middle;
+    max-width:100%;
+    display: block;
+    margin: 10px 0;
+    border-radius: 5px;
+}
