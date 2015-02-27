@@ -1,5 +1,5 @@
 ---
-  layout: default
+  layout: post
   title: 用css3绘制3d手机
 ---
 

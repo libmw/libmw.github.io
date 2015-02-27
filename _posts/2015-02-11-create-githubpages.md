@@ -1,5 +1,5 @@
 ---
-  layout: default
+  layout: post
   title: 如何建立github个人博客以及在本地搭建jekyll测试环境
 ---
 
