@@ -21,3 +21,5 @@
 3. 最后进入git项目的根目录，运行`jekyll serve` ，然后访问http://127.0.0.1:4000/便能看到效果了
 
 4. 本地测试好以后，把代码提交到github，github会自动生成静态网站。注意jekyll生成的_site文件夹不需要提交，这个是本地的静态网站文件夹
+
+## jekyll还有更多高级的用法，可以参考官方网站的[源代码](https://github.com/jekyll/jekyll/tree/master/site),里面包含了翻页、生成docs页面等用法
