@@ -3,7 +3,9 @@
   title: 图片裁剪上传组件
 ---
 
-# 我是开朗我自豪，我是超哥儿，我为自己带盐
+# 图片裁剪上传
+
+多用于用户头像的裁剪。在本地对图片进行裁剪压缩后，再传递到后端，后端只需要保存最终的图片即可。支持按尺寸预览。
 
 <style>
     #avg {z-index:999;position:absolute;top:5px;left:5px;font-size:12px;color:#000;}
@@ -23,14 +25,15 @@
 
         var container = document.getElementById('headImage');
         window.imageCliper = new HeadImageCliper({
-            container: container,
-            flashUrl: '/resource/2015/headimagecliper/headImageCliper.swf',
-            width: container.clientWidth,
-            height: container.clientHeight,
-            uploadUrl: '/resource/2015/headimagecliper/upload.php',
-            isPreview: true,
-            previewSize: '180|100|50',
-            resourceUrl: '/resource/2015/headimagecliper/'
+            container: container, //上传界面的容器，原生dom
+            flashUrl: '../bin-debug/headImageCliper.swf?v=0527', //上传flash的地址,加上版本号，防止flash被缓存
+            width: container.clientWidth, //flash的宽度
+            height: container.clientHeight, //flash的高度
+            uploadUrl: 'upload.php', //上传路径
+            file: 'file', //上传的字段名，默认为file
+            isPreview: true, //是否显示预览图
+            previewSize: '180|100|50', //预览图尺寸。'200|100'代表显示200*200和100*100的预览图。注意预览图的尺寸如果过大，可能会超出flash的可视范围，此时应该设置不显示预览图或者增大flash的宽高度
+            resourceUrl: 'http://127.0.0.1/headImageCliper/demo/' //flash包含的按钮、光标等静态文件的放置路径
         });
 
         imageCliper.bind("complete",function(evt, response){
@@ -48,5 +51,5 @@
 </script>
 
 <footer>
-    [View On Github](https://github.com/libmw/headImageCliper)
+    <a href="https://github.com/libmw/headImageCliper">View On Github</a>
 </footer>
