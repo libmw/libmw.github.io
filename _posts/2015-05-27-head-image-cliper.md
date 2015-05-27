@@ -7,6 +7,8 @@
 
 多用于用户头像的裁剪。在本地对图片进行裁剪压缩后，再传递到后端，后端只需要保存最终的图片即可。支持按尺寸预览。
 
+本案例上传按钮点击后会上传失败，因为demo里指定的上传地址仅仅作为示例，是一个无法访问的地址。
+
 <style>
     #avg {z-index:999;position:absolute;top:5px;left:5px;font-size:12px;color:#000;}
 }
@@ -42,6 +44,7 @@
         });
 
         imageCliper.bind("error",function(evt, response){
+            alert('上传失败，请查看console');
             console.log('jsjsjsjsjsjsjsjsjsjsjsjsjsjsjs**********error', response);
         });
 
