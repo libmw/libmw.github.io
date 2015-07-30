@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+    <head>
+        <title>flash头像裁剪上传</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style type="text/css" media="screen">
+            html, body  { height:100%; }
+            body { margin:0; padding:0; overflow:auto; text-align:center; 
+                   background-color: #fff; }   
+            object:focus { outline:none; }
+        </style>
+    </head>
+
+    <body>
+
+        <button onclick="imageCliper.submit();">上传</button>
+
+        <div id="headImage" style="width:730px;height:730px;margin-left: 10px;">
+
+        </div>
+
+		<script src="imageCliper.js"></script>
+        <script>
+            window.onload = function(){
+
+                var container = document.getElementById('headImage');
+                window.imageCliper = new ImageCliper({
+                    container: container, //上传界面的容器，原生dom
+                    flashUrl: '../bin-debug/imageCliper.swf?v=0728', //上传flash的地址
+                    width: container.clientWidth, //flash的宽度
+                    height: container.clientHeight, //flash的高度
+                    uploadUrl: './upload.php', //上传路径
+                    file: 'file', //上传的字段名，默认为file
+                    isPreview: true, //是否显示预览图
+                    previewSize: '200*160|300*80', //上传到服务器的图片的尺寸
+                    ratio: 0,
+                    defaultPreview: './img_1438242362849.jpg',
+                    resourceUrl: './' //flash包含的按钮、光标等静态文件的放置路径
+                });
+
+                imageCliper.bind("complete",function(evt, response){
+                    alert('上传成功，请查看console');
+                    console.log('jsjsjsjsjsjsjsjsjsjsjsjsjsjsjs**********complete', response);
+                });
+
+                imageCliper.bind("error",function(evt, response){
+                    console.log('jsjsjsjsjsjsjsjsjsjsjsjsjsjsjs**********error', response);
+                });
+
+                //imageCliper.setImageSrc('http://127.0.0.1/imageCliper/demo/img_1432626207571.jpg'); 设置默认图片地址
+
+            }
+        </script>
+   </body>
+</html>
