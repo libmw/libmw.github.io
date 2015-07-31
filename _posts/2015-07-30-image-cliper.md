@@ -26,18 +26,20 @@
 <script src="/resource/2015/imagecliper/imageCliper.js"></script>
 <script>
     window.onload = function(){
-
         var container = document.getElementById('headImage');
         window.imageCliper = new ImageCliper({
             container: container, //上传界面的容器，原生dom
-            flashUrl: '/resource/2015/imagecliper/ImageCliper.swf?v=0527', //上传flash的地址,加上版本号，防止flash被缓存
             width: container.clientWidth, //flash的宽度
             height: container.clientHeight, //flash的高度
+            ratio: 1, //长宽比。默认为1。若为浮点数则会根据此比例裁剪图片。若不需要按比例裁剪，请设置为0
+            flashUrl: '/resource/2015/imagecliper/ImageCliper.swf?v=0731', //上传flash的地址
+            resourceUrl: '/resource/2015/imagecliper/', //flash包含的按钮、光标等静态文件的放置路径
             uploadUrl: '/resource/2015/imagecliper/upload.php', //上传路径
+            uploadSize: '200*160', //上传到服务器的图片的尺寸，若不指定，将直接上传裁剪后的图片区域
             file: 'file', //上传的字段名，默认为file
             isPreview: true, //是否显示预览图
-            previewSize: '180|100|50', //预览图尺寸。'200|100'代表显示200*200和100*100的预览图。注意预览图的尺寸如果过大，可能会超出flash的可视范围，此时应该设置不显示预览图或者增大flash的宽高度
-            resourceUrl: '/resource/2015/imagecliper/' //flash包含的按钮、光标等静态文件的放置路径
+            previewSize: '200*160|100*80', //显示哪些尺寸的预览图
+            defaultPreview: '/resource/2015/imagecliper/test.jpg' //默认显示的预览图
         });
 
         imageCliper.bind("complete",function(evt, response){
