@@ -32,7 +32,7 @@
             width: container.clientWidth, //flash的宽度
             height: container.clientHeight, //flash的高度
             ratio: 1, //长宽比。默认为1。若为浮点数则会根据此比例裁剪图片。若不需要按比例裁剪，请设置为0
-            flashUrl: '/resource/2015/imageclipper/imageClipper.swf?v=0810', //上传flash的地址
+            flashUrl: '/resource/2015/imageclipper/imageClipper.swf?v=08101', //上传flash的地址
             resourceUrl: '/resource/2015/imageclipper/', //flash包含的按钮、光标等静态文件的放置路径
             uploadUrl: '/resource/2015/imageclipper/upload.php', //上传路径
             uploadSize: '200*160', //上传到服务器的图片的尺寸，若不指定，将直接上传裁剪后的图片区域
