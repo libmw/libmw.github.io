@@ -32,14 +32,14 @@
             width: container.clientWidth, //flash的宽度
             height: container.clientHeight, //flash的高度
             ratio: 1, //长宽比。默认为1。若为浮点数则会根据此比例裁剪图片。若不需要按比例裁剪，请设置为0
-            flashUrl: '/resource/2015/imagecliper/ImageClipper.swf?v=0810', //上传flash的地址
-            resourceUrl: '/resource/2015/imagecliper/', //flash包含的按钮、光标等静态文件的放置路径
-            uploadUrl: '/resource/2015/imagecliper/upload.php', //上传路径
+            flashUrl: '/resource/2015/imageclipper/ImageClipper.swf?v=0810', //上传flash的地址
+            resourceUrl: '/resource/2015/imageclipper/', //flash包含的按钮、光标等静态文件的放置路径
+            uploadUrl: '/resource/2015/imageclipper/upload.php', //上传路径
             uploadSize: '200*160', //上传到服务器的图片的尺寸，若不指定，将直接上传裁剪后的图片区域
             file: 'file', //上传的字段名，默认为file
             isPreview: true, //是否显示预览图
             previewSize: '200*160|100*80', //显示哪些尺寸的预览图
-            defaultPreview: '/resource/2015/imagecliper/test.jpg' //默认显示的预览图
+            defaultPreview: '/resource/2015/imageclipper/test.jpg' //默认显示的预览图
         });
 
         imageClipper.bind("complete",function(evt, response){
