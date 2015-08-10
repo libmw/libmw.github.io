@@ -17,22 +17,22 @@
 </style>
 
 
-<button onclick="imageCliper.submit();">上传</button>
+<button onclick="imageClipper.submit();">上传</button>
 
 <div id="headImage" style="width:730px;height:730px;margin-left: 10px;">
 
 </div>
 
-<script src="/resource/2015/imagecliper/imageCliper.js"></script>
+<script src="/resource/2015/imageclipper/imageClipper.js"></script>
 <script>
     window.onload = function(){
         var container = document.getElementById('headImage');
-        window.imageCliper = new ImageCliper({
+        window.imageClipper = new ImageClipper({
             container: container, //上传界面的容器，原生dom
             width: container.clientWidth, //flash的宽度
             height: container.clientHeight, //flash的高度
             ratio: 1, //长宽比。默认为1。若为浮点数则会根据此比例裁剪图片。若不需要按比例裁剪，请设置为0
-            flashUrl: '/resource/2015/imagecliper/ImageCliper.swf?v=0731', //上传flash的地址
+            flashUrl: '/resource/2015/imagecliper/ImageClipper.swf?v=0810', //上传flash的地址
             resourceUrl: '/resource/2015/imagecliper/', //flash包含的按钮、光标等静态文件的放置路径
             uploadUrl: '/resource/2015/imagecliper/upload.php', //上传路径
             uploadSize: '200*160', //上传到服务器的图片的尺寸，若不指定，将直接上传裁剪后的图片区域
@@ -42,21 +42,21 @@
             defaultPreview: '/resource/2015/imagecliper/test.jpg' //默认显示的预览图
         });
 
-        imageCliper.bind("complete",function(evt, response){
+        imageClipper.bind("complete",function(evt, response){
             alert('上传成功，请查看console');
             console.log('jsjsjsjsjsjsjsjsjsjsjsjsjsjsjs**********complete', response);
         });
 
-        imageCliper.bind("error",function(evt, response){
+        imageClipper.bind("error",function(evt, response){
             alert('上传失败，请查看console');
             console.log('jsjsjsjsjsjsjsjsjsjsjsjsjsjsjs**********error', response);
         });
 
-        //imageCliper.setImageSrc('http://127.0.0.1/imageCliper/demo/img_1432626207571.jpg'); 设置默认图片地址
+        //imageClipper.setImageSrc('http://127.0.0.1/imageClipper/demo/img_1432626207571.jpg'); 设置默认图片地址
 
     }
 </script>
 
 <footer>
-    <a href="https://github.com/libmw/imageCliper">View On Github</a>
+    <a href="https://github.com/libmw/imageClipper">View On Github</a>
 </footer>
