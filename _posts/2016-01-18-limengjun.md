@@ -41,6 +41,7 @@ img{
     -moz-transition: all 0.7s ease-out;
     -o-transition: all 0.7s ease-out;
     transition: all 0.7s ease-out;
+    max-width: 60%;
 }
 .section{
     text-align:center;
@@ -61,239 +62,6 @@ img{
 }
 
 
-
-
-    /* Section 0
-    * --------------------------------------- */
-#section0{
-    padding: 60px 0;
-}
-
-
-
-
-    /* Section 1
-    * --------------------------------------- */
-
-
-#section1 .box{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -192px;
-    margin-left: 89px;
-    width: 395px;
-    z-index: 1;
-}
-#section1 .imgsContainer{
-    display: block;
-    position: absolute;
-    z-index: 1;
-    top: 42%;
-    left: 58%;
-    margin-top: -325px;
-    margin-left: -747px;
-    width: 800px;
-    height: 696px;
-}
-#section1 img{
-    height: 100%;
-}
-    /*screen resolutions between 620px and 800px*/
-@media all and (min-width: 620px) and (max-width: 800px){
-    #section1 .imgsContainer{
-        margin-top: -278px;
-        margin-left: -685px;
-        width: 647px;
-        height: 563px;
-    }
-}
-
-    /*screen resolutions lower than 620px*/
-@media all and (max-width: 620px){
-    #section1 .imgsContainer{
-        margin-top: -208px;
-        margin-left: -516px;
-        width: 534px;
-        height: 464px;
-    }
-}
-#iphone2{
-    z-index: 10;
-}
-#iphone2.active{
-    -webkit-transform: translate3d(-134px, 0px, 0px);
-    -moz-transform: translate3d(-134px, 0px, 0px);
-    -ms-transform:translate3d(-134px, 0px, 0px);
-    transform: translate3d(-134px, 0px, 0px);
-}
-
-#iphone3{
-    z-index: 12;
-}
-#iphone3.active{
-    -webkit-transform: translate3d(213px, 0px, 0px);
-    -moz-transform: translate3d(213px, 0px, 0px);
-    -ms-transform:translate3d(213px, 0px, 0px);
-    transform: translate3d(213px, 0px, 0px);
-}
-
-#iphone4{
-    z-index: 11;
-    left: 140px;
-}
-
-#iphone4.active{
-    -webkit-transform: translate3d(548px, 0px, 0px);
-    -moz-transform: translate3d(548px, 0px, 0px);
-    -ms-transform:translate3d(548px, 0px, 0px);
-    transform: translate3d(548px, 0px, 0px);
-}
-
-
-
-
-    /* Section 2
-    * --------------------------------------- */
-#section2 img{
-    position:absolute;
-}
-#section2 .imgsContainer,
-#staticImg .imgsContainer,
-#section3 .imgsContainer{
-    position: absolute;
-    z-index: 1;
-    left: 50%;
-    display: block;
-    margin-top: -288px;
-    margin-left: -636px;
-    width: 0;
-    height: 0;
-
-    -webkit-transition: all 1.2s ease-in-out;
-    -moz-transition: all 1.2s ease-in-out;
-    -o-transition: all 1.2s ease-in-out;
-    transition: all 1.2s ease-in-out;
-}
-
-#section2.moveUp .imgsContainer{
-    top: 50%;
-}
-
-#section2.moveDown .imgsContainer,
-#staticImg .imgsContainer{
-    top: 90%;
-}
-
-#section2.active .imgsContainer{
-    top: 50%;
-}
-
-#section2 .box{
-    top: 22%;
-    left: 42%;
-    position: absolute;
-    width: 582px;
-}
-
-#iphone-yellow{
-    top: -35px;
-    left: -222px;
-}
-
-#iphone-red{
-    top: -194px;
-    left: 106px;
-}
-
-#iphone-blue{
-    top: 320px;
-    left: 448px;
-}
-
-#iphone-green{
-    left: 106px;
-    position:absolute;
-}
-
-#staticImg{
-    display: block;
-    position: absolute;
-    z-index: 1;
-    top: 200%;
-    left: 0;
-    width: 100%;
-    min-width: 980px;
-    height: 100%;
-
-    -webkit-transition: all 0.7s ease-out;
-    -moz-transition: all 0.7s ease-out;
-    -o-transition: all 0.7s ease-out;
-    transition: all 0.7s ease-out;
-
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-}
-#staticImg.moveDown{
-    -webkit-transform: translate3d(0, 100%, 0);
-    -ms-transform: translate3d(0, 100%, 0);
-    transform: translate3d(0, 100%, 0);
-}
-#staticImg.moveUp{
-
-    -webkit-transform: translate3d(0, 0, 0);
-    -ms-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-}
-#staticImg.moveDown .imgsContainer{
-    top: 50%;
-}
-#staticImg.moveDown img{
-    top: 155px;
-}
-
-#staticImg.active .imgsContainer{
-    top: 50%;
-}
-
-
-#staticImg.active img{
-    top: 487px;
-}
-
-
-
-
-
-    /* Section 3
-    * --------------------------------------- */
-#section3 .imgsContainer{
-    top: 50%;
-}
-
-#section3 img{
-    top: 155px;
-    left: 455px;
-    position: absolute;
-}
-#section3 .box{
-    text-align: center;
-    margin: 10% 0 0 0;
-}
-
-
-
-    /* Overwriting fullPage.js tooltip color
-    * --------------------------------------- */
-.fp-tooltip{
-    color: #AAA;
-}
-#fp-nav span, .fp-slidesNav span{
-    border-color: #AAA;
-}
-#fp-nav li .active span, .fp-slidesNav .active span{
-    background: #AAA;
-}
 
 </style>
 <script src="/resource/201601/limengjun/jquery.min.js"></script>
@@ -340,64 +108,79 @@ img{
     </div>
 
     <div class="section " id="section0">
-        <h1>主动与进取</h1>
-
-        <h2>14年7月加入onenet</h2>
-        <h2>组建onenet前端开发团队</h2>
+        <h1>中移物联网优秀员工评选</h1>
+        <h2>姓名：李孟君</h2>
+        <h2>职务：OneNet前端开发团队负责人</h2>
+        <h2>入职：14年7月</h2>
         <img src="/resource/201601/limengjun/1.png" alt="iphone" />
+
     </div>
 
     <div class="section " id="section1">
-        <h1>主动与进取</h1>
-
-        <h2>onenet1.0设计者</h2>
-        <h2>onenet1.0前端架构者</h2>
-        <h3>业界领先的前端开发框架
-            自主知识产权的组件库</h3>
-        <img src="/resource/201601/limengjun/2.png" alt="iphone" />
+        <h1>主动与进取-OneNet1.0设计者</h1>
+        <h2>独立设计了oneNet1.0的所有页面功能</h2>
+        <h2>组织外包团队开发了OneNet1.0页面UI</h2>
         <img src="/resource/201601/limengjun/3.png" alt="iphone" />
     </div>
 
-    <div class="section" id="section1">
-        <div class="wrap">
-            <div class="imgsContainer">
-                <img src="imgs/iphone2.png" alt="iphone" id="iphone2" />
-                <img src="imgs/iphone3.png" alt="iphone" id="iphone3" />
-                <img src="imgs/iphone4.png" alt="iphone" id="iphone4" />
-            </div>
 
-            <div class="box">
-                <h2>A powerful plugin</h2>
-                <strong>fullPage.js</strong>  callbacks allow you to create amazing dynamic sites with a bit of imagination. This example tries to reproduce the Apple iPhone-5c website animations as an example of what fullPage.js is capable of.
-            </div>
-        </div>
+
+    <div class="section" id="section2">
+        <h1>主动与进取-OneNet1.0前端架构师</h1>
+        <h2>设计了业界领先的前端框架：开发效率高、运行效率快</h2>
+        <h2>设计了具有自主知识产权的前端组件库：功能强大，升级方便</h2>
+        <img src="/resource/201601/limengjun/4.png" alt="iphone" />
     </div>
 
-    <div class="section moveDown" id="section2">
-        <div class="wrap">
-            <div class="imgsContainer">
-                <img src="imgs/iphone-yellow.png" alt="iphone" id="iphone-yellow" />
-                <img src="imgs/iphone-red.png" alt="iphone" id="iphone-red" />
-                <img src="imgs/iphone-blue.png" alt="iphone" id="iphone-blue" />
-            </div>
 
-            <div class="box">
-                <h2>Amazing stuff</h2>
-                Combining <strong>fullPage.js</strong> with your own CSS styles and animations, you will be able to create something remarkable.
-            </div>
-        </div>
+
+    <div class="section " id="section4">
+        <h1>创新-OneNet应用编辑器</h1>
+        <h2>独立设计和开发了OneNet应用编辑器</h2>
+        <h2>应用编辑器是业界首创，具核心竞争力</h2>
+        <h2>为各大厂商带来方便，深受业界欢迎</h2>
+        <img src="/resource/201601/limengjun/6.png" alt="iphone" />
     </div>
-    <div class="section moveDown" id="section3">
-        <div class="wrap">
-            <div class="box">
-                <h2>Just a demo</h2>
-                This is, of course, just a demo. I didn't want to spend much time on it.
-                Don't expect it to work perfectly in all kind of screens.
-                It has been designed to work on 1180px width or over on modern browsers with CSS3.
-            </div>
-        </div>
-        <div class="imgsContainer">
-            <img src="imgs/iphone-two.png" alt="iphone" id="iphone-two" />
-        </div>
+
+    <div class="section " id="section5">
+        <h1>创新-OneNet头像编辑器</h1>
+        <h2>独立设计开发了OneNet头像编辑器</h2>
+        <h2>在github上开源了OneNet头像编辑器</h2>
+        <h2>猪八戒等网站均使用了此编辑器</h2>
+        <img src="/resource/201601/limengjun/7.png" alt="iphone" />
+    </div>
+
+    <div class="section " id="section6">
+        <h1>合作-谷歌开发者大会</h1>
+        <h2>与谷歌重庆开发者合作举办谷歌开发者大会</h2>
+        <h2>担任大会讲师，宣传了公司的前端技术</h2>
+        <h2>与其他开发者深入交流，共同学习最新技术</h2>
+        <img src="/resource/201601/limengjun/8.png" alt="iphone" />
+    </div>
+
+    <div class="section " id="section7">
+        <h1>坚韧-OneNet2.0技术带头人</h1>
+        <h2>在另一技术带头人突然离职的情况下：</h2>
+        <h2>带领只有5人的技术团队，完成了OneNet2.0的开发</h2>
+        <h2>在界面上和访问速度上得到了巨大的提升</h2>
+        <h2>OneNet2.0已经成为开放平台部的核心产品之一</h2>
+        <img src="/resource/201601/limengjun/5.png" alt="iphone" />
+    </div>
+
+    <div class="section " id="section8">
+        <h1>坚韧-顶住人员压力</h1>
+        <h2>在技术人员严重不足的情况下：</h2>
+        <h2>果断认命新的后端负责人，共同填补人员缺口</h2>
+        <h2>独立完成了部门前端笔试题库</h2>
+        <h2>承担了大部分招聘任务，为公司招聘大量人才</h2>
+        <img src="/resource/201601/limengjun/9.png" alt="iphone" />
+    </div>
+
+    <div class="section " id="section9">
+        <h1>高效-优化文档和流程</h1>
+        <h2>探索团队重要目标，分离出主要任务和次要任务</h2>
+        <h2>组织整理团队文档，增加新人上手效率</h2>
+        <h2>优化了团队各项流程，增加开发效率</h2>
+        <img src="/resource/201601/limengjun/10.png" alt="iphone" />
     </div>
 </div>
