@@ -300,9 +300,9 @@ img{
 }
 
 </style>
-<script src="jquery.min.js"></script>
+<script src="/resource/201601/limengjun/jquery.min.js"></script>
 
-<script type="text/javascript" src="jquery.fullPage.js"></script>
+<script type="text/javascript" src="/resource/201601/limengjun/jquery.fullPage.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -335,9 +335,6 @@ img{
         });
     });
 </script>
-
-</head>
-<body>
 
 <div id="fullpage">
     <div id="staticImg">
