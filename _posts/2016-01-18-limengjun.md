@@ -1,6 +1,6 @@
 ---
-  layout: post
-  title: 图片裁剪上传组件
+  layout: pure
+  title: 李孟君-中移物联网先进员工评选宣传页
 ---
 <link rel="stylesheet" type="text/css" href="/resource/201601/limengjun/jquery.fullPage.css" />
 <!--[if IE]>
