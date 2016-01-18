@@ -68,10 +68,6 @@ img{
 #section0{
     padding: 60px 0;
 }
-#section0 img{
-    height: 100%;
-    margin: 40px 0 0 0;
-}
 
 
 
