@@ -41,7 +41,8 @@ img{
     -moz-transition: all 0.7s ease-out;
     -o-transition: all 0.7s ease-out;
     transition: all 0.7s ease-out;
-    max-width: 60%;
+
+    max-height: 65%;
 }
 .section{
     text-align:center;
@@ -101,12 +102,6 @@ img{
 </script>
 
 <div id="fullpage">
-    <div id="staticImg">
-        <div class="imgsContainer">
-            <img src="imgs/iphone-green.png" alt="iphone" id="iphone-green" />
-        </div>
-    </div>
-
     <div class="section " id="section0">
         <h1>中移物联网优秀员工评选</h1>
         <h2>姓名：李孟君</h2>
