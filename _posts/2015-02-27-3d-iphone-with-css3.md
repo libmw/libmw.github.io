@@ -52,7 +52,7 @@
         .phone-container .front {
             width: 251px;
             height: 537px;
-            background: url(http://www.heclouds.com/static/try/img/front.png) no-repeat;
+            background: url(/resource/201502/front.png) no-repeat;
             -webkit-transform: translateX(-125px) rotateY(0deg) translateZ(14px);
             -moz-transform: translateX(-125px) rotateY(0deg) translateZ(14px);
             -ms-transform: translateX(-125px) rotateY(0deg) translateZ(14px);
@@ -62,7 +62,7 @@
         .phone-container .back {
             width: 251px;
             height: 537px;
-            background: url(http://www.heclouds.com/static/try/img/back.png) no-repeat;
+            background: url(/resource/201502/back.png) no-repeat;
             -webkit-transform: translateX(-125px) rotateY(180deg) translateZ(13px);
             -moz-transform: translateX(-125px) rotateY(180deg) translateZ(13px);
             -ms-transform: translateX(-125px) rotateY(180deg) translateZ(13px);
@@ -94,7 +94,7 @@
         .phone-container .left {
             width: 31px;
             height: 537px;
-            background: url(http://www.heclouds.com/static/try/img/left_side.png) no-repeat;
+            background: url(/resource/201502/left_side.png) no-repeat;
             -webkit-transform: translateX(-138px) rotateY(-90deg);
             -moz-transform: translateX(-138px) rotateY(-90deg);
             -ms-transform: translateX(-138px) rotateY(-90deg);
@@ -135,7 +135,7 @@
         .phone-container .right {
             width: 31px;
             height: 537px;
-            background: url(http://www.heclouds.com/static/try/img/right_side.png) no-repeat;
+            background: url(/resource/201502/right_side.png) no-repeat;
             -webkit-transform: translateX(105px) rotateY(90deg);
             -moz-transform: translateX(105px) rotateY(90deg);
             -ms-transform: translateX(105px) rotateY(90deg);
