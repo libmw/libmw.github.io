@@ -45,28 +45,32 @@
     }
 </style>
 <div id="issueTable"></div>
+<h2>14款飞度保养手册，参照官方保养手册生成，仅供参考</h2>
+<p>注：轮胎无法用公里数准确衡量保养方案，请参考轮胎厂商说明</p>
+<div id="issueTable"></div>
 <script>
     var issueList = {
         5000: [
             '更换发动机机油',
             '添加喷油嘴清洁剂',
-            '清洁空气滤清器'
+            '清洁空气滤清器滤芯'
         ],
         10000: [
             '更换发动机机油滤清器',
-            '更换空气滤清器',
             '检查前后制动器',
-            '轮胎换位'
+            '轮胎换位(至少每月检查一次胎压及磨耗情况)',
+            '目视检查横拉杆接头、方向机壳体及防尘罩、悬架部分、传动轴防尘罩'
         ],
         20000: [
             '更换灰尘与花粉滤清器',
-            '检查制动软管和管路ABS',
+            '更换空气滤清器滤芯',
+            '检查制动软管和管路（包括ABS）',
             '检查所有的液位及油液状态、检查排气系统、燃油管路及其连接'
         ],
         40000: [
+            '更换变速器油（手动变速器每6万公里一换）',
             '检查气门间隙',
             '检查和调节传动皮带',
-            '更换变速器油',
             '检查驻车制动调节'
         ],
         60000: [
@@ -86,6 +90,12 @@
         ]
     };
 
+    var constIssueList = { //固定公里数要做的事情
+        20000: [
+            '检查驻车制动调节'
+        ]
+    };
+
     var tableHTML = '<table><tr><td>公里数</td><td>事项</td></tr>';
 
     for(var i = 1; i <= 40; i++){
@@ -102,19 +112,19 @@
         var issueArr = [];
         for(var issueKm in issueList){
             if(km % issueKm === 0){
-                issueArr = issueArr.concat(issueList[issueKm])
+                issueArr = issueArr.concat(issueList[issueKm]);
             }
         }
-        return decorateIssue(issueArr, km);
+        return decorateIssue(issueArr.concat((constIssueList[km] || [])), km);
     }
 
     /*function groupIssue(issues){
-        var issuesHtmlArr = [];
-        for(var i = 0; i < issues.length; i++){
-            issuesHtmlArr.push(decorateIssue(issues[i]));
-        }
-        return issuesHtmlArr.join(',');
-    }*/
+     var issuesHtmlArr = [];
+     for(var i = 0; i < issues.length; i++){
+     issuesHtmlArr.push(decorateIssue(issues[i]));
+     }
+     return issuesHtmlArr.join(',');
+     }*/
     function decorateIssue(issueArr, km){
         var issuesArr = [];
         var issuesByLevel = {
@@ -153,9 +163,4 @@
 
         return issuesArr.join('；');
     }
-
-
-
-
-
 </script>
