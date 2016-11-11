@@ -44,9 +44,9 @@
         color: indigo;
     }
 </style>
-<div id="issueTable"></div>
 <h2>14款飞度保养手册，参照官方保养手册生成，仅供参考</h2>
 <p>注：轮胎无法用公里数准确衡量保养方案，请参考轮胎厂商说明</p>
+<div id="issueTable"></div>
 <script>
     var issueList = {
         5000: [
