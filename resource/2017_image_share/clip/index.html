@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title> 图片裁切 </title>
+    <meta name="Generator" content="EditPlus">
+    <meta name="Author" content="">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+    <meta charset="utf-8">
+    <style>
+            /* clip */
+        .clipContainer{
+
+
+            cursor:move;
+        }
+        .clipContainer table{
+            width:100%;
+            height:100%;
+            border-collapse: collapse;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .clipContainer table td{
+            background-color:rgba(0,0,0,0); /* ie里td无背景无法拖动 */
+            border: 1px solid rgba(255,255,255,.3);
+        }
+        .clipContainer .resize-image{
+            width:100%;
+            height:100%;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .clipContainer .resize-image img{
+            position: absolute;
+        }
+        .clipContainer img{
+
+        }
+        .clipContainer .resize-btn{
+            width:10px;
+            height:10px;
+            position:absolute;
+            border: 1px solid white;
+            border-radius:5px;
+            background-color: #bfbfbf;
+        }
+        .clipContainer .r-nw{
+            top: -5px;
+            left: -5px;
+            cursor: nw-resize;
+        }
+        .clipContainer .r-ne{
+            top: -5px;
+            right: -5px;
+            cursor: ne-resize;
+        }
+        .clipContainer .r-sw{
+            bottom: -5px;
+            left: -5px;
+            cursor: sw-resize;
+        }
+        .clipContainer .r-se{
+            bottom: -5px;
+            right: -5px;
+            cursor: se-resize;
+        }
+        .clipContainer .r-s{
+            top:0;
+            left:45%;
+            cursor: s-resize;
+        }
+        .clipContainer .clip-handle-btn{
+            text-align:center;
+        }
+        .clipContainer .clip-handle-btn span{
+            display: inline-block;
+            margin: 5px 8px;
+            width: 25px;
+            height: 25px;
+            border-radius: 12.5px;
+            background-color: #d7d5d5;
+            background-image:url('/tb/static-common/img/editor/spr_icons.png');
+            cursor: pointer;
+        }
+        .clipContainer .clip-handle-btn span:hover{
+            background-color: #fff;
+        }
+        .clipContainer .clip-handle-btn .btn-ok{
+            background-position: -308px -34px;
+        }
+        .clipContainer .clip-handle-btn .btn-cancel{
+            background-position: -340px -34px;
+        }
+        .clipContainer .clip-handle-btn-overflow{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+
+</head>
+
+<body>
+<div id="clip_container" style="position: relative;width: 500px; height: 500px; border: 1px solid red;">
+
+</div>
+<div class="thumbs_clip_container">
+    <div class="imageinner" id="inner" style="height: 400px; position: relative; overflow: hidden;">
+        <div class="ui-imagecut-mask"></div>
+        <div id="ui-imagecut" style="width: 200px; height: 200px; left: 100px; top: 100px;">
+            <div class="ui-imagecut-helper ui-imagecut-HMR"></div>
+            <div class="ui-imagecut-helper ui-imagecut-HML"></div>
+            <div class="ui-imagecut-helper ui-imagecut-HBC"></div>
+            <div class="ui-imagecut-helper ui-imagecut-HTC"></div>
+            <div class="ui-imagecut-can"></div>
+            <</div>
+        </div>
+</div>
+<script src="jquery-1.10.2.min.js"></script>
+<script src="resize.js"></script>
+<script src="clip.js"></script>
+<script type="text/javascript">
+    clipper.initial($('#clip_container'), 'b1.jpg');
+</script>
+</body>
+</html>

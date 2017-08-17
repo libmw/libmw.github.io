@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js – The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <style>
+            body *{
+                font-family: 'microsoft yahei'!important;
+            }
+        </style>
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>HTML5</h1>
+					<h3>图片上传与处理</h3>
+					<p>
+						<small>中移物联网有限公司 <a href="https://github.com/libmw">李孟君</a></small>
+					</p>
+                    <p>
+                        <small>GitHub： <a href="https://github.com/libmw">https://github.com/libmw</a></small>
+                    </p>
+				</section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## 原始图片上传
+
+                            + 使用input[type="file"]表单直接提交图片
+
+                            + 后端收到图片数据，检测、压缩、水印，返回上传结果
+
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## 弊端
+
+                            + 带宽消耗大，上传速度慢
+
+                            + 前端无法预览
+
+                            + 上传进度不易取得
+
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## flash版图片上传
+
+                            + 直接嵌入flash控件来完成图片上传
+
+                            + 可以在前端对图片进行裁剪、压缩、美化等，功能强大
+
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## 弊端
+
+                            + 浏览器必须支持flash插件
+
+                            + flash不易维护，每次改动都需要编译
+
+                        </script>
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    ## HTML5图片上传
+
+                    + 使用原生的api对图片进行压缩、裁剪、旋转、水印等操作
+
+                    + 传递到后端的是处理以后的图片，最大限度节约了带宽，后端直接存储，节省服务器开销
+
+                    + 代码纯js，易于维护
+                </section>
+
+                <section>
+                    <h2>第一步 获取文件对象</h2>
+
+                    <ul>
+                        <li>
+                            <p>
+                                inputDom.files.<a href="https://developer.mozilla.org/en-US/docs/Web/API/FileList" target="_blank">FileList</a>
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                <a href="https://developer.mozilla.org/en-US/docs/Web/API/FileReader" target="_blank">FileReader</a>.readAsDataURL(FileList[0])
+                            </p>
+                        </li>
+
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>第二步 使用canvas压缩图片</h2>
+
+                    <ul>
+                        <li>
+                            <p>
+                                new Image().src = dataURL
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                canvasContext.drawImage()
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                canvas.toBlob(callback, 'image/jpeg', 0.8);
+                            </p>
+                        </li>
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>第三步 文件上传</h2>
+
+                    <ul>
+                        <li>
+                            <p>
+                                new FormData().append('file', blob)
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                xhr.upload.onprogress = function(){}
+                            </p>
+                        </li>
+
+                        <li>
+                            <p>
+                                xhr.send(formData)
+                            </p>
+                        </li>
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>扩展一 拖拽上传</h2>
+
+                    <ul>
+                        <li>
+                            <p>
+                                <span style="color: #F5017E;">dragenter</span>: function(e){showEnterTips();}
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                <span style="color: #F5017E;">dragleave</span>: function(e){hideEnterTips();}
+                            </p>
+                        </li>
+
+                        <li>
+                            <p>
+                                <span style="color: #F5017E;">drop</span>: function(e){upload(e.originalEvent.dataTransfer.files);}
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                <a href="drag.html">Example</a>
+                            </p>
+                        </li>
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>扩展二 Exif</h2>
+                    <section>
+                        <ul>
+                            <li>
+                                <p>
+                                    所有的JPEG文件以字符串“0xFFD8”开头，并以字符串“0xFFD9”结束。
+                                </p>
+                            </li>
+
+                            <li>
+                                <p>
+                                    JPEG文件的头部有很多Marker，Marker格式为FFXX，<a href="https://www.media.mit.edu/pia/Research/deepview/exif.html">exif</a>的Marker为FFE1
+                                </p>
+                            </li>
+
+                            <li>
+                                <p>
+                                    在JPEG格式头部插入了拍摄时间、GPS、快门、光圈、焦距等信息
+                                </p>
+                            </li>
+
+                            <li>
+                                <p>
+                                    通过exif信息获取图片的拍摄地址、拍摄时间等信息
+                                </p>
+                            </li>
+
+                            <li>
+                                <p>
+                                    <a href="exif-js-master/example/index.html">Example</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </section>
+                    <section>
+                        <img src="exif.jpg" />
+                    </section>
+
+                </section>
+
+                <section>
+                    <h2>扩展三 前端加水印、生成缩略图</h2>
+
+                    <ul>
+                        <li>
+                            <p>
+                                通过在canvas上绘制图片实现前端水印
+                            </p>
+                        </li>
+
+                        <li>
+                            <p>
+                                通过改变canvas的大小来生成缩略图
+                            </p>
+                        </li>
+
+
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>扩展四 图片编辑、图片美化</h2>
+
+                    <ul>
+                        <li>
+                            <p>
+                                通过操作canvas实现图片的裁剪、编辑
+                            </p>
+                        </li>
+
+                        <li>
+                            <p>
+                                通过算法、素材图来实现图片的美化
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                <a href="clip/canvas_pixel.html">canvas的像素级操作</a>
+                            </p>
+                        </li>
+                    </ul>
+
+                </section>
+
+                <section>
+                    <h2>实例</h2>
+
+                    <ul>
+                        <li>
+                            <p>
+                                <a href="http://tieba.baidu.com/f?kw=%C3%C0%C5%AE&fr=index" target="_blank">百度贴吧图片系统</a>
+                            </p>
+                        </li>
+
+                        <li>
+                            <p>
+                                <a href="clip/index.html" target="_blank">imageClipper</a>
+                            </p>
+                        </li>
+                    </ul>
+                </section>
+
+
+
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

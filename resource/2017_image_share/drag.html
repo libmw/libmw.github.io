@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title> New Document </title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+ </head>
+ <style>
+	.img_ctn{
+		margin-top:10px;
+		padding:10px;
+		border: 1px solid red;
+	}
+	.img_ctn img{
+		width: 100px;
+		padding:3px;
+		margin: 3px;
+		border:1px solid gray;
+	}
+ </style>
+
+ <body>
+  <div style="height:100px;border:1px solid blue;" id="dragWrap">拖动到此</div>
+  <div class="img_ctn" id="imgCtn">
+  </div>
+ </body>
+ <script>
+	var dragW = document.getElementById('dragWrap');
+	dragW.addEventListener('dragenter', function(e){
+		//console.log('dragenter:', e);
+		e.preventDefault();
+	});
+	dragW.addEventListener('dragover', function(e){
+		//console.log('dragover:', e);
+		e.preventDefault();
+	});
+	dragW.addEventListener('dragleave', function(e){
+		//console.log('dragleave:', e);
+		e.preventDefault();
+	});
+	dragW.addEventListener('drop', function(e){
+		//console.log('drop:',e, e.dataTransfer.files);
+		
+		e.preventDefault();
+		getFiles(e);
+	});
+	function getFiles(evt){
+		var fileList = evt.dataTransfer.files;
+		var imgCtn = document.getElementById('imgCtn');
+		for(var i = 0; i < fileList.length; i++){
+			var file = fileList[i];
+			if(file.type.indexOf('image') === -1){
+				console.log('此文件不是图片：', file.name);
+				continue;
+			}
+			if(window.URL.createObjectURL){ //使用完成后可以通过revokeObjectURL释放内存
+				var tempImg = document.createElement('img');
+				tempImg.src = window.URL.createObjectURL(file);
+				console.log('通过URL创建图片',file);
+				imgCtn.appendChild(tempImg);
+			}else if(window.webkitURL.createObjectURL){
+				var tempImg = document.createElement('img');
+				tempImg.src = window.URL.createObjectURL(file);
+				console.log('通过webkitURL创建图片',file);
+				imgCtn.appendChild(tempImg);
+			}else{
+				var reader = new FileReader();
+				reader.onload = function(e){
+					var tempImg = document.createElement('img');
+					console.log('reder完毕', e, this);
+					tempImg.src = this.result;
+					imgCtn.appendChild(tempImg);
+
+				};
+				reader.readAsDataURL(file);
+			}
+		}
+	}
+	/*
+		上传：
+			如果支持FormData，直接创建formData在append(file)就可以
+			如果不支持，可以手动获取二进制，然后拼凑表单数据格式，使用file.getAsBinary得到二进制数据。应该也可以用blob方式上传二进制文件。
+			如果需要压缩，则使用canvas压缩，然后通过图片得到图片二进制，通过blob创建二进制文件对象，上传这个对象。
+	*/
+ </script>
+</html>
