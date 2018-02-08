@@ -35,7 +35,7 @@
 <h2>把图片拖进来</h2>
 <div id="makeAndModel" style="height: 30px;"></div>
 <div class="container" id="ctn"></div>
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
+<script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
 <script src="/resource/2018/exif.js"></script>
 <script>
 
