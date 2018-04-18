@@ -35,6 +35,7 @@
 <h2>把图片拖进来</h2>
 <div id="makeAndModel" style="height: 30px;"></div>
 <div class="container" id="ctn"></div>
+<div class="detail" id="picDetail"></div>
 <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
 <script src="/resource/2018/exif.js"></script>
 <script>
@@ -89,6 +90,7 @@
                     var GPSLatitudeRef = EXIF.getTag(this, "GPSLatitudeRef");
                     makeAndModel.innerHTML = `${lon} ${GPSLongitudeRef} ${lat} ${GPSLatitudeRef}`;
                     renderPoint(lon, lat, GPSLongitudeRef, GPSLatitudeRef);
+                    renderPictureDetail(this);
                 });
 			}
 		}
@@ -115,6 +117,26 @@
         })
 
 
+    }
+
+    var picDetail = document.getElementById('picDetail');
+    const detailFields = {
+        'DateTimeOriginal': '拍摄时间',
+        'Make': '品牌',
+        'Model': '型号',
+    };
+    function renderPictureDetail(obj){
+        picDetail.innerHTML = '';
+        for(var field in detailFields){
+            dumpDetail(detailFields[field], EXIF.getTag(obj, field));
+        }
+    }
+    function dumpDetail(name, value){
+        var div = document.createElement('div');
+        div.innerHTML = `
+            <em>${name}<em>:<span>${value}</span>
+        `;
+        picDetail.appendChild(div);
     }
     
 </script>
