@@ -3,6 +3,10 @@
   title: 照片位置查看器
 ---
 <style>
+    
+    h2{
+        font-size: 1rem;
+    }
     html{
         height: 100%;
     }
@@ -11,7 +15,9 @@
         padding: 0;
         margin: 0;
         font-family: '微软雅黑';
+        font-size: 14px;
     }
+    
     table{
         border-collapse: collapse;
         border-spacing: 0;
@@ -31,8 +37,24 @@
     .container{
         height: 500px;
     }
+    .picker{
+            display: none;
+        }
+    @media screen and (max-width: 500px) {
+        body,html {
+            font-size: 28px;
+            
+        }
+        h2{
+            display: none;
+        }
+        .picker{
+            display: block;
+        }
+    }
 </style>
 <h2>把图片拖进来</h2>
+<div class="picker"><input type="file" id="filePicker"></div>
 <div id="makeAndModel" style="height: 30px;"></div>
 <div class="container" id="ctn"></div>
 <div class="detail" id="picDetail"></div>
@@ -67,10 +89,16 @@
 		//console.log('drop:',e, e.dataTransfer.files);
 		
 		e.preventDefault();
-		getFiles(e);
+		getFiles(e.dataTransfer.files);
 	});
-	function getFiles(evt){
-		var fileList = evt.dataTransfer.files;
+
+    var filePicker = document.getElementById('filePicker');
+    filePicker.addEventListener('change', function(e){
+        console.log(this);
+        getFiles(this.files);
+    })
+
+	function getFiles(fileList){
 		var imgCtn = document.getElementById('imgCtn');
 		for(var i = 0; i < fileList.length; i++){
 			var file = fileList[i];
@@ -125,6 +153,7 @@
         'Make': '品牌',
         'Model': '型号',
     };
+    
     function renderPictureDetail(obj){
         picDetail.innerHTML = '';
         for(var field in detailFields){
