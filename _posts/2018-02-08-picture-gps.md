@@ -68,8 +68,11 @@
 <script>
     var pageControl = {
         init: function(){
-            this.baiduMap.init();
-            this.googleMap.init();
+            this.baiduMapCtn = document.getElementById("baiduMapCtn");
+            this.googleMapCtn = document.getElementById("googleMapCtn");
+            this.baiduMap.init(this.baiduMapCtn);
+            this.googleMap.init(this.googleMapCtn);
+            this.currentMap = null;            
             var _this = this;
             //拖动
             var dragW = document.body;
@@ -95,20 +98,29 @@
             });
             //地图切换
             document.getElementById('mapShift').addEventListener('click', function(e){
-                console.log(e)
+                var target = e.target;
+                if(target.nodeName == 'BUTTON'){
+                    _this.changeMapTo(target.dataset.type);
+                }
             })
             //图片
             this.picDetail = document.getElementById("picDetail");
-            this.detailFields = {
-                DateTimeOriginal: "拍摄时间",
-                Make: "品牌",
-                Model: "型号"
-            };
-            this.currentMap = this.baiduMap;
+            this.changeMapTo('baidu');
+        },
+        changeMapTo: function(type){
+            if(type == 'baidu'){
+                this.currentMap = this.baiduMap;
+                this.baiduMapCtn.style.display = 'block';
+                this.googleMapCtn.style.display = 'none';
+            }else{
+                this.currentMap = this.googleMap;
+                this.baiduMapCtn.style.display = 'none';
+                this.googleMapCtn.style.display = 'block';
+            }
         },
         baiduMap: {
-            init: function(){
-                var map = new BMap.Map("baiduMapCtn");
+            init: function(ctn){
+                var map = new BMap.Map(ctn);
                 // 创建地图实例  
                 var point = new BMap.Point(116.404, 39.915);
                 // 创建点坐标  
@@ -133,7 +145,7 @@
             }
         },
         googleMap: {
-            init: function(){
+            init: function(ctn){
                 var point = new google.maps.LatLng(42.882688, -90.579412);
                 //初始化
                 var mapOptions = {
@@ -141,7 +153,7 @@
                     zoom: 3,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
-                var map = new google.maps.Map(document.getElementById('googleMapCtn'), mapOptions);
+                var map = new google.maps.Map(ctn, mapOptions);
                 map.setCenter(point);
                 //设置级别
                 map.setZoom(15);
@@ -193,15 +205,20 @@
             return dd;
         },
         renderPoint: function (lon, lat, GPSLongitudeRef, GPSLatitudeRef){
-            var x = ConvertDMSToDD(+lon[0], +lon[1], +lon[2], GPSLongitudeRef);
-            var y = ConvertDMSToDD(+lat[0], +lat[1], +lat[2], GPSLatitudeRef);
+            var x = this.ConvertDMSToDD(+lon[0], +lon[1], +lon[2], GPSLongitudeRef);
+            var y = this.ConvertDMSToDD(+lat[0], +lat[1], +lat[2], GPSLatitudeRef);
             console.log(x,y)
-            _this.currentMap.setPosition(x, y);
+            this.currentMap.setPosition(x, y);
         },
         renderPictureDetail: function (obj){
-            _this.picDetail.innerHTML = '';
+            this.picDetail.innerHTML = '';
+            var detailFields = {
+                DateTimeOriginal: "拍摄时间",
+                Make: "品牌",
+                Model: "型号"
+            };
             for(var field in detailFields){
-                dumpDetail(detailFields[field], EXIF.getTag(obj, field));
+                this.dumpDetail(detailFields[field], EXIF.getTag(obj, field));
             }
         },
         dumpDetail: function (name, value){
@@ -209,7 +226,7 @@
             div.innerHTML = `
                 <em>${name}<em>:<span>${value}</span>
             `;
-            _this.picDetail.appendChild(div);
+            this.picDetail.appendChild(div);
         }
     };
     function initializegooglemap(){
