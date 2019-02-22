@@ -1,6 +1,6 @@
 ---
   layout: pure
-  title: 照片位置查看器
+  title: car-location
 ---
 <style>
     
@@ -17,29 +17,10 @@
         font-family: '微软雅黑';
         font-size: 14px;
     }
-    
-    table{
-        border-collapse: collapse;
-        border-spacing: 0;
-        empty-cells: show;
-        border: 1px solid #cbcbcb;
-
-    }
-    td,th{
-        border-left: 1px solid #cbcbcb;
-        border-width: 0 0 0 1px;
-        font-size: inherit;
-        margin: 0;
-        overflow: visible;
-        padding: .5em 1em;
-        border-bottom: 1px solid #cbcbcb;
-    }
     .container{
         height: 500px;
     }
-    .picker{
-            display: none;
-        }
+   
     @media screen and (max-width: 500px) {
         body,html {
             font-size: 28px;
@@ -54,70 +35,25 @@
     }
 </style>
 
-<h2>把图片拖进来</h2>
-<div class="picker"><input type="file" id="filePicker"></div>
-<div id="makeAndModel" style="height: 30px;"></div>
-<div class="map_shift" id="mapShift">
-    <button data-type="baidu">百度地图</button>
-    <button data-type="google">谷歌地图</button>
-</div>
+<h1>car-location</h1>
 <div class="container" id="baiduMapCtn"></div>
-<div class="container" id="googleMapCtn"></div>
-<div class="detail" id="picDetail"></div>
 <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
-<script src="/resource/2018/exif.js"></script>
+<script src="/resource/2019/onenetsdk.min.js"></script>
 <script>
+    function CarMarker(deviceId){
+        this.apiKey = '';
+        var api = new OneNetApi('WVoJzD5Mr2JZX1mLJKgxiUC2NuQ=');
+        api.getDataPoints(deviceId, {datastream_id:'Gps'}).done(function(res){
+            console.log('api调用完成，服务器返回data为：', res);
+            var xy = res.data.datastreams[0].datapoints[0].value;
+            pageControl.baiduMap.setPosition(xy.lon, xy.lat, null, deviceId);
+        });
+    }
     var pageControl = {
         init: function(){
             this.baiduMapCtn = document.getElementById("baiduMapCtn");
-            this.googleMapCtn = document.getElementById("googleMapCtn");
             this.baiduMap.init(this.baiduMapCtn);
-            this.googleMap.init(this.googleMapCtn);
-            this.currentMap = null;            
             var _this = this;
-            //拖动
-            var dragW = document.body;
-            dragW.addEventListener("dragenter", function(e){
-                e.preventDefault();
-            });
-            dragW.addEventListener("dragover", function(e){
-                //console.log('dragover:', e);
-                e.preventDefault();
-            });
-            dragW.addEventListener("dragleave", function(e){
-                //console.log('dragleave:', e);
-                e.preventDefault();
-            });
-            dragW.addEventListener("drop", function(e){
-                e.preventDefault();
-                _this.getFiles(e.dataTransfer.files);
-            });
-            var filePicker = document.getElementById("filePicker");
-            filePicker.addEventListener("change", function(e){
-                console.log(this);
-                _this.getFiles(this.files);
-            });
-            //地图切换
-            document.getElementById('mapShift').addEventListener('click', function(e){
-                var target = e.target;
-                if(target.nodeName == 'BUTTON'){
-                    _this.changeMapTo(target.dataset.type);
-                }
-            })
-            //图片
-            this.picDetail = document.getElementById("picDetail");
-            this.changeMapTo('baidu');
-        },
-        changeMapTo: function(type){
-            if(type == 'baidu'){
-                this.currentMap = this.baiduMap;
-                this.baiduMapCtn.style.display = 'block';
-                this.googleMapCtn.style.display = 'none';
-            }else{
-                this.currentMap = this.googleMap;
-                this.baiduMapCtn.style.display = 'none';
-                this.googleMapCtn.style.display = 'block';
-            }
         },
         baiduMap: {
             init: function(ctn){
@@ -133,43 +69,26 @@
                 this.marker = marker;
                 this.map = map;
             },
-            setPosition: function(x,y){
+            addMarker: function(point){
+                // 初始化地图，设置中心点坐标和地图级别 
+                var marker = new BMap.Marker(point); // 创建点
+                this.map.addOverlay(marker);  
+                return marker;
+            },
+            setPosition: function(x, y, marker, deviceId){
                 var ggPoint = new BMap.Point(x,y);
                 var convertor = new BMap.Convertor();
                 var pointArr = [];
                 pointArr.push(ggPoint);
                 var _this = this;
                 convertor.translate(pointArr, 1, 5, function(data){
-                    _this.marker.setPosition(data.points[0]);
+                    if(!marker){
+                        marker = _this.addMarker(data.points[0])
+                    }
+                    marker.setPosition(data.points[0]);
+                    marker.setLabel(new BMap.Label(deviceId));
                     _this.map.centerAndZoom(data.points[0], 15);
-                })
-            }
-        },
-        googleMap: {
-            init: function(ctn){
-                var point = new google.maps.LatLng(42.882688, -90.579412);
-                //初始化
-                var mapOptions = {
-                    center: point,
-                    zoom: 3,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                };
-                var map = new google.maps.Map(ctn, mapOptions);
-                map.setCenter(point);
-                //设置级别
-                map.setZoom(15);
-                var marker = new google.maps.Marker({
-                    position: point,
-                    map: map
                 });
-                this.marker = marker;
-                this.map = map;
-            },
-            setPosition: function(x,y){
-                //设置中心点
-                var point = new google.maps.LatLng(x,y);
-                this.map.setCenter(point);
-                this.marker.setPosition(point);
             }
         },
         getFiles: function (fileList){
@@ -230,8 +149,10 @@
             this.picDetail.appendChild(div);
         }
     };
-    function initializegooglemap(){
-        pageControl.init();  
-    }
+    pageControl.init(); 
+    new CarMarker(517341974);
+    new CarMarker(517341975);
+    new CarMarker(517341976);
+    new CarMarker(517341977);
+    new CarMarker(517341978);
 </script>
-<script src="//ditu.google.cn/maps/api/js?v=3&amp;sensor=false&amp;language=en&amp;callback=initializegooglemap"></script>
