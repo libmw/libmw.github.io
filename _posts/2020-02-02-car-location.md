@@ -45,37 +45,28 @@
     <input id="startTime" type="datetime-local" />
     <label for="endTime">结束时间：</label>
     <input id="endTime" type="datetime-local" />
-    <input id="searchButton" type="button" value="查询" />
+    <input type="button" value="查询" />
 </form>
 <div class="container" id="baiduMapCtn"></div>
 <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
 <script src="/resource/2019/onenetsdk.min.js"></script>
 <script>
-    function $(id){
-        return document.getElementById(id);
-    }
-    function getNormalizedDateTimeString(date){//date是标准的Date对象
-        var iosString = date.toISOString();
-        return iosString.replace(/\..+/, '');
-    }
-    var apiKey = $('apiKey');
-    var deviceId = $('deviceId');
-    var startTime = $('startTime');
-    var endTime = $('endTime');
-    function CarMarker(deviceId, start, end){
-        var _this = this;
-        this.start = start;
-        this.end = end;
-        var api = new OneNetApi(apiKey.value);
+    function CarMarker(deviceId){
+        var api = new OneNetApi('WVoJzD5Mr2JZX1mLJKgxiUC2NuQ=');
         this._api = api;
         api.getDeviceInfo(deviceId).done(function(res){
             console.log('api调用完成，服务器返回data为：', res);
-            _this._deviceTitle = res.data.title;
-            _this.showHistory();
         });
     }
-    CarMarker.prototype.showHistory = function(){
-        this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: this.start, end: this.end}).done(function(res){
+    CarMarker.prototype.showHistory = function(start, end){
+        this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: start, end: end}).done(function(res){
+            console.log('api调用完成，服务器返回data为：', res);
+            var xy = res.data.datastreams[0].datapoints[0].value;
+            pageControl.baiduMap.resetMarker(xy.lon, xy.lat, null, deviceId);
+        });
+    }
+    CarMarker.prototype.showLast = function(){
+        this._api.getDataPoints(deviceId, {datastream_id:'Gps'}).done(function(res){
             console.log('api调用完成，服务器返回data为：', res);
             var xy = res.data.datastreams[0].datapoints[0].value;
             pageControl.baiduMap.resetMarker(xy.lon, xy.lat, null, deviceId);
@@ -86,16 +77,6 @@
             this.baiduMapCtn = document.getElementById("baiduMapCtn");
             this.baiduMap.init(this.baiduMapCtn);
             var _this = this;
-            this.initTimeRound();
-            $('searchButton').onclick = function(){
-                new CarMarker(deviceId.value, startTime.value, endTime.value);
-            }
-        },
-        initTimeRound: function(){
-            var dateNow = new Date();
-            var dateWeekAgo = new Date(dateNow - 1000 * 60 * 60 * 24 * 7);
-            startTime.value = getNormalizedDateTimeString(dateWeekAgo);
-            endTime.value = getNormalizedDateTimeString(dateNow);
         },
         baiduMap: {
             init: function(ctn){
@@ -135,9 +116,9 @@
         }        
     };
     pageControl.init(); 
-    /* new CarMarker(517341974);
+    new CarMarker(517341974);
     new CarMarker(517341975);
     new CarMarker(517341976);
     new CarMarker(517341977);
-    new CarMarker(517341978); */
+    new CarMarker(517341978);
 </script>
