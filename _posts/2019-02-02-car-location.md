@@ -38,18 +38,21 @@
 <h1>car-location</h1>
 <form>
     <label for="apiKey">ApiKey：</label>
-    <input id="apiKey" type="text" value="WVoJzD5Mr2JZX1mLJKgxiUC2NuQ=" />
+    <input id="apiKey" type="text" value="0XlwMJm8U42KEZ394N4p8hm2p=s=" />
     <label for="deviceId">设备ID：</label>
-    <input id="deviceId" type="text" value="517341974" />
+    <input id="deviceId" type="text" value="517162506" />
     <label for="startTime">开始时间：</label>
     <input id="startTime" type="datetime-local" />
     <label for="endTime">结束时间：</label>
     <input id="endTime" type="datetime-local" />
+    <label for="pointCount">点数量：</label>
+    <input id="pointCount" type="text" value="500" />
     <input id="searchButton" type="button" value="查询" />
 </form>
 <div class="container" id="baiduMapCtn"></div>
 <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
 <script src="/resource/2019/onenetsdk.min.js"></script>
+<script src="/resource/2019/map_convertor.js"></script>
 <script>
     function $(id){
         return document.getElementById(id);
@@ -58,27 +61,31 @@
         var iosString = date.toISOString();
         return iosString.replace(/\..+/, '');
     }
-    var apiKey = $('apiKey');
-    var deviceId = $('deviceId');
-    var startTime = $('startTime');
-    var endTime = $('endTime');
+    var $apiKey = $('apiKey');
+    var $deviceId = $('deviceId');
+    var $startTime = $('startTime');
+    var $endTime = $('endTime');
+    var $pointCount = $('pointCount');
     function CarMarker(deviceId, start, end){
         var _this = this;
         this.start = start;
         this.end = end;
-        var api = new OneNetApi(apiKey.value);
+        var api = new OneNetApi($apiKey.value);
         this._api = api;
         api.getDeviceInfo(deviceId).done(function(res){
             console.log('api调用完成，服务器返回data为：', res);
             _this._deviceTitle = res.data.title;
-            _this.showHistory();
+            _this.showHistory(deviceId);
         });
     }
-    CarMarker.prototype.showHistory = function(){
-        this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: this.start, end: this.end}).done(function(res){
+    CarMarker.prototype.showHistory = function(deviceId){
+        this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: this.start, end: this.end, limit: $pointCount.value}).done(function(res){
             console.log('api调用完成，服务器返回data为：', res);
-            var xy = res.data.datastreams[0].datapoints[0].value;
-            pageControl.baiduMap.resetMarker(xy.lon, xy.lat, null, deviceId);
+            var pointsArr = res.data.datastreams[0].datapoints.map(function(item){
+                var bdGps = GPS.GPSToBaidu(item.value.lat, item.value.lon);
+                return new BMap.Point(bdGps.lng, bdGps.lat);
+            });
+            pageControl.baiduMap.resetMarker(pointsArr);
         });
     }
     var pageControl = {
@@ -88,14 +95,14 @@
             var _this = this;
             this.initTimeRound();
             $('searchButton').onclick = function(){
-                new CarMarker(deviceId.value, startTime.value, endTime.value);
+                new CarMarker($deviceId.value, $startTime.value, $endTime.value);
             }
         },
         initTimeRound: function(){
             var dateNow = new Date();
             var dateWeekAgo = new Date(dateNow - 1000 * 60 * 60 * 24 * 7);
-            startTime.value = getNormalizedDateTimeString(dateWeekAgo);
-            endTime.value = getNormalizedDateTimeString(dateNow);
+            $startTime.value = getNormalizedDateTimeString(dateWeekAgo);
+            $endTime.value = getNormalizedDateTimeString(dateNow);
         },
         baiduMap: {
             init: function(ctn){
@@ -117,20 +124,29 @@
                 this.map.addOverlay(marker);  
                 return marker;
             },
-            resetMarker: function(x, y, marker, deviceId){
-                var ggPoint = new BMap.Point(x,y);
-                var convertor = new BMap.Convertor();
-                var pointArr = [];
-                pointArr.push(ggPoint);
-                var _this = this;
-                convertor.translate(pointArr, 1, 5, function(data){
-                    if(!marker){
-                        marker = _this.generateMarker(data.points[0]);
-                        marker.setLabel(new BMap.Label(deviceId));
-                    }
-                    marker.setPosition(data.points[0]);
-                    _this.map.centerAndZoom(data.points[0], 15);
+            resetMarker: function(pointsArr){
+                var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+                    scale: 0.6,//图标缩放大小
+                    strokeColor:'#fff',//设置矢量图标的线填充颜色
+                    strokeWeight: '2',//设置线宽
                 });
+                var icons = new BMap.IconSequence(sy, '10', '30');
+                var polyline =new BMap.Polyline(pointsArr, {
+                    enableEditing: false,//是否启用线编辑，默认为false
+                    enableClicking: true,//是否响应点击事件，默认为true
+                    //icons:[icons],
+                    strokeWeight:'8',//折线的宽度，以像素为单位
+                    strokeOpacity: 0.8,//折线的透明度，取值范围0 - 1
+                    strokeColor:"#18a45b" //折线颜色
+                });
+                var _this = this;
+                /* pointsArr.forEach(function(item){
+                    var marker = new BMap.Marker(item); // 创建点
+                    _this.map.addOverlay(marker);  
+                }); */
+                this.map.clearOverlays(); 
+                this.map.addOverlay(polyline); 
+                this.map.centerAndZoom(pointsArr[0], 15);
             }
         }        
     };
