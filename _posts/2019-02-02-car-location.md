@@ -34,21 +34,22 @@
         }
     }
 </style>
-
-<h1>car-location</h1>
-<form>
-    <label for="apiKey">ApiKey：</label>
-    <input id="apiKey" type="text" value="0XlwMJm8U42KEZ394N4p8hm2p=s=" />
-    <label for="deviceId">设备ID：</label>
-    <input id="deviceId" type="text" value="517162506" />
-    <label for="startTime">开始时间：</label>
-    <input id="startTime" type="datetime-local" />
-    <label for="endTime">结束时间：</label>
-    <input id="endTime" type="datetime-local" />
-    <label for="pointCount">点数量：</label>
-    <input id="pointCount" type="text" value="500" />
-    <input id="searchButton" type="button" value="查询" />
-</form>
+<div id="head">
+    <h1>car-location</h1>
+    <form>
+        <label for="apiKey">ApiKey：</label>
+        <input id="apiKey" type="text" value="0XlwMJm8U42KEZ394N4p8hm2p=s=" />
+        <label for="deviceId">设备ID：</label>
+        <input id="deviceId" type="text" value="517162506" />
+        <label for="startTime">开始时间：</label>
+        <input id="startTime" type="datetime-local" />
+        <label for="endTime">结束时间：</label>
+        <input id="endTime" type="datetime-local" />
+        <label for="pointCount">点数量：</label>
+        <input id="pointCount" type="text" value="500" />
+        <input id="searchButton" type="button" value="查询" />
+    </form>
+</div>
 <div class="container" id="baiduMapCtn"></div>
 <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
 <script src="/resource/2019/onenetsdk.min.js"></script>
@@ -66,6 +67,7 @@
     var $startTime = $('startTime');
     var $endTime = $('endTime');
     var $pointCount = $('pointCount');
+    $('baiduMapCtn').style.height = (document.body.offsetHeight - $('head').offsetHeight) + 'px'
     function CarMarker(deviceId, start, end){
         var _this = this;
         this.start = start;
