@@ -20,10 +20,10 @@ var GPS = {
         return { 'lat': dLat, 'lng': dLng };
     },
     /**
-     * WGS-84 to GCJ-02 GPS坐标转中国坐标
+     * WGS-84 to GCJ-02 GPS坐标转百度坐标
      * @param  {number} wgsLat GPS纬度
      * @param  {number} wgsLng GPS经度
-     * @return {object}        返回中国坐标经纬度对象
+     * @return {object}        返回百度坐标经纬度对象
      */
     GPSToBaidu: function(wgsLat, wgsLng) {
         if (this.outOfChina(wgsLat, wgsLng))
@@ -185,7 +185,7 @@ var GPS = {
      * 是否在中国之外
      * @param  {number} lat 纬度
      * @param  {number} lng 经度
-     * @return {boolean]}     返回结果真或假
+     * @return {boolean}     返回结果真或假
      */
     outOfChina: function(lat, lng) {
         if (lng < 72.004 || lng > 137.8347)

@@ -74,14 +74,14 @@
         this.end = end;
         var api = new OneNetApi($apiKey.value);
         this._api = api;
-        api.getDeviceInfo(deviceId).done(function(res){
+        api.getDeviceInfo(deviceId).then(function(res){
             console.log('api调用完成，服务器返回data为：', res);
             _this._deviceTitle = res.data.title;
             _this.showHistory(deviceId);
         });
     }
     CarMarker.prototype.showHistory = function(deviceId){
-        this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: this.start, end: this.end, limit: $pointCount.value}).done(function(res){
+        this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: this.start, end: this.end, limit: $pointCount.value}).then(function(res){
             console.log('api调用完成，服务器返回data为：', res);
             var pointsArr = res.data.datastreams[0].datapoints.map(function(item){
                 var bdGps = GPS.GPSToBaidu(item.value.lat, item.value.lon);
