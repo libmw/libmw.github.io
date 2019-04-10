@@ -49,10 +49,13 @@
         <label for="pointCount">点数量：</label>
         <input id="pointCount" type="text" value="500" />
         <input id="searchButton" type="submit" value="查询" />
-        <input id="prevButton" type="button" value="前一天" />
-        <input id="nextButton" type="button" value="后一天" />
+        <input id="prevDateButton" type="button" value="前一天" />
+        <input id="nextDateButton" type="button" value="后一天" />
+        <input id="prevPageButton" type="button" value="上一页" />
+        <input id="nextPageButton" type="button" value="下一页" />
     </form>
-    <div id="log" class="log"></div>
+    <div id="log" class="log">
+    </div>
 </div>
 <div class="container" id="baiduMapCtn"></div>
 <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
@@ -101,6 +104,9 @@
     }
     function splitDatapointsByVelocity(dataPoints){
         let splitedPoints = [];
+        splitedPoints.count = dataPoints.length;
+        splitedPoints.startTime = dataPoints[0].at;
+        splitedPoints.endTime = dataPoints[dataPoints.length - 1].at;
         let currentVelocityGroup, 
             previousVelocityGroup = getVelocityGroup(calcVelocity(dataPoints[0], dataPoints[1])),
             tempPoints = {
@@ -132,8 +138,10 @@
     var $startTime = $('startTime');
     var $endTime = $('endTime');
     var $pointCount = $('pointCount');
-    var $prevButton = $('prevButton');
-    var $nextButton = $('nextButton');
+    var $prevDateButton = $('prevDateButton');
+    var $nextDateButton = $('nextDateButton');
+    var $prevPageButton = $('prevPageButton');
+    var $nextPageButton = $('nextPageButton');
     var $searchButton = $('searchButton');
     var $log = $('log');
     $('baiduMapCtn').style.height = (document.body.offsetHeight - $('head').offsetHeight) + 'px'
@@ -141,6 +149,9 @@
         var _this = this;
         this.start = start;
         this.end = end;
+        this.pointsCache = {};
+        this.cursorListOfPageIndex = [1];
+        this.currentPageIndex = 0;
         var api = new OneNetApi($apiKey.value);
         this._api = api;
         api.getDeviceInfo(deviceId).then(function(res){
@@ -150,40 +161,92 @@
         });
     }
     CarMarker.prototype.showHistory = function(deviceId){
+        var _this = this;
         this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: this.start, end: this.end, limit: $pointCount.value}).then(function(res){
             console.log('api调用完成，服务器返回data为：', res);
-            $log.innerHTML = '本次共渲染' + res.data.count + '个点';
-            pageControl.baiduMap.resetMarker(splitDatapointsByVelocity(res.data.datastreams[0].datapoints));
+            $log.innerHTML = '当前第1页，本次共渲染' + res.data.count + '个点';
+            if(res.data.cursor){ //加入第二页的corsor
+                _this.cursorListOfPageIndex[1] = res.data.cursor;
+            }
+            var splitedPoints = splitDatapointsByVelocity(res.data.datastreams[0].datapoints);
+            pageControl.baiduMap.resetMarker(splitedPoints);
+            _this.pointsCache[1] = splitedPoints;
         });
     }
+    CarMarker.prototype.showDataByPageIndex = function(pageIndex){
+        var cursor = this.cursorListOfPageIndex[pageIndex];
+        if(!cursor){
+            $log.innerHTML = '当前第' + (pageIndex + 1) + '页，本次共渲染0个点';
+            return;
+        }
+        var splitedPoints = this.pointsCache[cursor];
+        if(splitedPoints){
+            pageControl.baiduMap.resetMarker(splitedPoints);
+            $log.innerHTML = '当前第' + (pageIndex + 1) + '页，本次共渲染' + splitedPoints.count + '个点';
+            return;
+        }
+        var _this = this;
+        this._api.getDataPoints($deviceId.value, {datastream_id:'Gps', start: this.start, end: this.end, limit: $pointCount.value, cursor: cursor}).then(function(res){
+            if(res.data.cursor){ //加入下一页的corsor
+                _this.cursorListOfPageIndex[pageIndex + 1] = res.data.cursor;
+            }
+            var splitedPoints = splitDatapointsByVelocity(res.data.datastreams[0].datapoints);
+            pageControl.baiduMap.resetMarker(splitedPoints);
+            _this.pointsCache[cursor] = splitedPoints;
+            $log.innerHTML = '当前第' + (pageIndex + 1) + '页，本次共渲染' + splitedPoints.count + '个点';
+        });
+    }
+    CarMarker.prototype.renderPrevPage = function(){
+        if(this.currentPageIndex == 0){
+            return;
+        }
+        this.showDataByPageIndex(--this.currentPageIndex);
+    };
+    CarMarker.prototype.renderNextPage = function(){
+        this.showDataByPageIndex(++this.currentPageIndex);
+    };
     var pageControl = {
         init: function(){
-            this.baiduMapCtn = document.getElementById("baiduMapCtn");
+            this.baiduMapCtn = document.getElementById('baiduMapCtn');
             this.baiduMap.init(this.baiduMapCtn);
             var _this = this;
             this.initTimeRound(new Date());
-            if(localStorage.getItem('apiKey')){
-                //0XlwMJm8U42KEZ394N4p8hm2p=s=
+            if(localStorage.getItem('apiKey')){//0XlwMJm8U42KEZ394N4p8hm2p=s=
                 $apiKey.value = localStorage.getItem('apiKey');
+            }
+            if(localStorage.getItem('deviceId')){//517162506
+                $deviceId.value = localStorage.getItem('deviceId');
+            }
+            if(localStorage.getItem('pointCount')){//500
+                $pointCount.value = localStorage.getItem('pointCount');
             }
             $searchButton.onclick = function(e){
                 if($apiKey.value.trim()){
                     localStorage.setItem('apiKey', $apiKey.value.trim());
                 }
+                if($deviceId.value.trim()){
+                    localStorage.setItem('deviceId', $deviceId.value.trim());
+                }
+                if($pointCount.value.trim()){
+                    localStorage.setItem('pointCount', $pointCount.value.trim());
+                }
                 e.preventDefault();
-                new CarMarker($deviceId.value, $startTime.value, $endTime.value);
+                _this.carMarker = new CarMarker($deviceId.value, $startTime.value, $endTime.value);
             }
-            $prevButton.onclick = function(){
+            $prevDateButton.onclick = function(){
                 var dateCurrent = new Date($startTime.value);
                 var dateNew = new Date(+dateCurrent - 3600 * 1000 * 24);
                 _this.initTimeRound(dateNew);
                 $searchButton.click();
             }
-            $nextButton.onclick = function(){
-                var dateCurrent = new Date($startTime.value);
-                var dateNew = new Date(+dateCurrent + 3600 * 1000 * 24);
-                _this.initTimeRound(dateNew);
-                $searchButton.click();
+            $nextDateButton.onclick = function(){
+                _this.carMarker.renderPrevPage();
+            }
+            $prevPageButton.onclick = function(){
+                _this.carMarker.renderPrevPage();
+            }
+            $nextPageButton.onclick = function(){
+                _this.carMarker.renderNextPage();
             }
         },
         initTimeRound: function(date){
@@ -214,7 +277,6 @@
             resetMarker: function(splitedPoints){
                 this.map.clearOverlays();
                 var _this = this;
-                console.log(splitedPoints)
                 splitedPoints.forEach(item => {
                     _this.drawLine(item.points, VelocityGroupColor[item.velocityGroup]);
                 });
@@ -231,8 +293,11 @@
                 });
                 var endPoints = splitedPoints[splitedPoints.length - 1].points;
                 var markerEnd = new BMap.Marker(endPoints[endPoints.length - 1], {icon:iconEnd});
+                markerStart.setLabel(new BMap.Label(splitedPoints.startTime, {offset: new BMap.Size(-20,-20)}));
+                markerEnd.setLabel(new BMap.Label(splitedPoints.endTime, {offset: new BMap.Size(-20,-20)}));
                 this.map.addOverlay(markerStart); 
                 this.map.addOverlay(markerEnd); 
+                this.map.setViewport([splitedPoints[0].points[0], endPoints[endPoints.length - 1]]);
             },
             drawLine: function(pointsArr, color){
                  var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
@@ -250,7 +315,6 @@
                     strokeColor: color //折线颜色
                 });
                 this.map.addOverlay(polyline);
-                this.map.centerAndZoom(pointsArr[0], 15);
             }
         }        
     };
