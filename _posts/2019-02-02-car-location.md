@@ -75,20 +75,28 @@
         return distance / timeCost;
     }
     function getVelocityGroup(velocity){ //计算单位为米/微秒
-        if(velocity < 0.00278){ //10KM/h / 3.6 / 100
-            return 10;
-        }else if(velocity < 0.00556){ //20KM/h / 3.6 / 100
-            return 20;
-        }else if(velocity < 0.01111){ //40KM/h / 3.6 / 100
-            return 40;
+        /* 
+        5 0.00138
+        10 0.00278 
+        15 0.00417 
+        20 0.00556
+        30 0.00833
+        40 0.01111
+        */
+        if(velocity < 0.00138){
+            return 5;
+        }else if(velocity < 0.00417){
+            return 15;
+        }else if(velocity < 0.00833){
+            return 30;
         }else{
             return 100;
         }
     }
     var VelocityGroupColor = {
-        10: '#b40000',
-        20: '#e80e0e',
-        40: '#f3ed49',
+        5: '#b40000',
+        15: '#e80e0e',
+        30: '#f3ed49',
         100: '#4fd27d',
     }
     function splitDatapointsByVelocity(dataPoints){
@@ -96,17 +104,17 @@
         let currentVelocityGroup, 
             previousVelocityGroup = getVelocityGroup(calcVelocity(dataPoints[0], dataPoints[1])),
             tempPoints = {
-                points: [dataPoints[0].value],
+                points: [getBMapPoint(dataPoints[0].value)],
                 velocityGroup: previousVelocityGroup
             };
         splitedPoints.push(tempPoints);
         for(let i = 1; i < dataPoints.length - 1; i++){
             currentVelocityGroup = getVelocityGroup(calcVelocity(dataPoints[i], dataPoints[i + 1]));
             if(currentVelocityGroup == previousVelocityGroup){ //当前两个点的速度和前两个点的速度属于同一个组
-                tempPoints.points.push(dataPoints[i].value);
+                tempPoints.points.push(getBMapPoint(dataPoints[i].value));
             }else{
                 tempPoints = {
-                    points: [dataPoints[i-1].value, dataPoints[i].value],
+                    points: [getBMapPoint(dataPoints[i-1].value), getBMapPoint(dataPoints[i].value)],
                     velocityGroup: currentVelocityGroup
                 };
                 splitedPoints.push(tempPoints);
@@ -114,6 +122,10 @@
             previousVelocityGroup = currentVelocityGroup;
         }
         return splitedPoints;
+    }
+    function getBMapPoint(point){
+        var bdGps = GPS.GPSToBaidu(point.lat, point.lon);
+        return new BMap.Point(bdGps.lng, bdGps.lat);
     }
     var $apiKey = $('apiKey');
     var $deviceId = $('deviceId');
@@ -141,10 +153,6 @@
         this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: this.start, end: this.end, limit: $pointCount.value}).then(function(res){
             console.log('api调用完成，服务器返回data为：', res);
             $log.innerHTML = '本次共渲染' + res.data.count + '个点';
-            var pointsArr = res.data.datastreams[0].datapoints.map(function(item){
-                var bdGps = GPS.GPSToBaidu(item.value.lat, item.value.lon);
-                return new BMap.Point(bdGps.lng, bdGps.lat);
-            });
             pageControl.baiduMap.resetMarker(splitDatapointsByVelocity(res.data.datastreams[0].datapoints));
         });
     }
@@ -206,20 +214,33 @@
             resetMarker: function(splitedPoints){
                 this.map.clearOverlays();
                 var _this = this;
+                console.log(splitedPoints)
                 splitedPoints.forEach(item => {
-                    _this.drawLine(item.points.map(function(point){
-                        var bdGps = GPS.GPSToBaidu(point.lat, point.lon);
-                        return new BMap.Point(bdGps.lng, bdGps.lat);
-                    }), VelocityGroupColor[item.velocityGroup]);
+                    _this.drawLine(item.points, VelocityGroupColor[item.velocityGroup]);
                 });
+                //加入marker
+                var iconStart = new BMap.Icon('/resource/2019/markers_bg.png', new BMap.Size(25,40), {
+                    imageSize: new BMap.Size(50, 40),
+                    anchor: new BMap.Size(12, 40)
+                });
+                var markerStart = new BMap.Marker(splitedPoints[0].points[0], {icon:iconStart});
+                var iconEnd = new BMap.Icon('/resource/2019/markers_bg.png', new BMap.Size(25,40), {
+                    imageOffset: new BMap.Size(-25,0),
+                    imageSize: new BMap.Size(50, 40),
+                    anchor: new BMap.Size(12, 40)
+                });
+                var endPoints = splitedPoints[splitedPoints.length - 1].points;
+                var markerEnd = new BMap.Marker(endPoints[endPoints.length - 1], {icon:iconEnd});
+                this.map.addOverlay(markerStart); 
+                this.map.addOverlay(markerEnd); 
             },
             drawLine: function(pointsArr, color){
-                /* var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+                 var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
                     scale: 0.6,//图标缩放大小
                     strokeColor:'#fff',//设置矢量图标的线填充颜色
                     strokeWeight: '2',//设置线宽
                 });
-                var icons = new BMap.IconSequence(sy, '10', '30'); */
+                var icons = new BMap.IconSequence(sy, '10', '30'); 
                 var polyline =new BMap.Polyline(pointsArr, {
                     enableEditing: false,//是否启用线编辑，默认为false
                     enableClicking: false,//是否响应点击事件，默认为true
