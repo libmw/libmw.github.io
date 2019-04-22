@@ -36,7 +36,6 @@
     }
 </style>
 <div id="head">
-    <h1>car-location</h1>
     <form id="searchForm">
         <label for="apiKey">ApiKey：</label>
         <input id="apiKey" type="text" value="0XlwMJm8U42KEZ394N4p8hm2p=s=" />
@@ -72,10 +71,17 @@
     function getDoubleDigit(number){
         return number < 10 ? ('0' + number) : number;
     }
-    function calcVelocity(pointStart, pointEnd){
+    function calcVelocityAndDistance(pointStart, pointEnd){
         var timeCost = new Date(pointEnd.at) - new Date(pointStart.at);
         var distance = GPS.distance(pointStart.value.lat, pointStart.value.lon, pointEnd.value.lat, pointEnd.value.lon);
-        return distance / timeCost;
+        return {distance: distance, velocity: distance / timeCost};
+    }
+    function calcDistanceOfPoints(points){
+        if(points.length < 2){
+            return 0;
+        }
+        let pointStart = points[0], pointEnd = points[points.length - 1];
+        return GPS.distance(pointStart.lat, pointStart.lng, pointEnd.lat, pointEnd.lng);
     }
     function getVelocityGroup(velocity){ //计算单位为米/微秒
         /* 
@@ -102,33 +108,87 @@
         30: '#f3ed49',
         100: '#4fd27d',
     }
+    function splitDatapointsByTime(dataPoints){
+        let splitedPoints = [];
+        let tempPoints = [dataPoints[0]];
+        for(let i = 1; i < dataPoints.length; i++){
+            if(new Date(dataPoints[i].at) - new Date(dataPoints[i - 1].at) > 600000){ //10分钟
+                splitedPoints.push(tempPoints);
+                tempPoints = [dataPoints[i]];
+            }else{
+                tempPoints.push(dataPoints[i]);
+            }
+        }
+        splitedPoints.push(tempPoints); //最后一组
+        return splitedPoints;
+    }
     function splitDatapointsByVelocity(dataPoints){
         let splitedPoints = [];
         splitedPoints.count = dataPoints.length;
         splitedPoints.startTime = dataPoints[0].at;
         splitedPoints.endTime = dataPoints[dataPoints.length - 1].at;
-        let currentVelocityGroup, 
-            previousVelocityGroup = getVelocityGroup(calcVelocity(dataPoints[0], dataPoints[1])),
+        let currentVelocityGroup,
+            currentPointsCost = calcVelocityAndDistance(dataPoints[0], dataPoints[1]);
+            previousVelocityGroup = getVelocityGroup(currentPointsCost.velocity),
+            reallyDistance = currentPointsCost.distance,
+            airDistance = reallyDistance,
+            currentStartPoint = dataPoints[0],
             tempPoints = {
-                points: [getBMapPoint(dataPoints[0].value)],
+                points: [getBMapPoint(dataPoints[0].value), getBMapPoint(dataPoints[1].value)],
                 velocityGroup: previousVelocityGroup
             };
         splitedPoints.push(tempPoints);
-        for(let i = 1; i < dataPoints.length - 1; i++){
-            currentVelocityGroup = getVelocityGroup(calcVelocity(dataPoints[i], dataPoints[i + 1]));
+        //根据速度分组并只保留长直线的端点
+        for(let i = 2; i < dataPoints.length - 1; i++){
+            currentPointsCost = calcVelocityAndDistance(dataPoints[i - 1], dataPoints[i]);
+            reallyDistance += currentPointsCost.distance; //实际距离
+            airDistance = GPS.distance(currentStartPoint.value.lat, currentStartPoint.value.lon, dataPoints[i].value.lat, dataPoints[i].value.lon); //航空距离
+            currentVelocityGroup = getVelocityGroup(currentPointsCost.velocity);
             if(currentVelocityGroup == previousVelocityGroup){ //当前两个点的速度和前两个点的速度属于同一个组
+                if(reallyDistance - airDistance < 1){
+                    tempPoints.points.length = tempPoints.points.length - 1;
+                }
                 tempPoints.points.push(getBMapPoint(dataPoints[i].value));
             }else{
                 tempPoints = {
                     points: [getBMapPoint(dataPoints[i-1].value), getBMapPoint(dataPoints[i].value)],
                     velocityGroup: currentVelocityGroup
                 };
+                currentStartPoint = dataPoints[i - 1];
+                reallyDistance = currentPointsCost.distance;
                 splitedPoints.push(tempPoints);
             }
             previousVelocityGroup = currentVelocityGroup;
         }
-        return splitedPoints;
+        //去掉毛刺点 TODO: 目前算法会把长直线与周边合并掉，因为长直线的点数量小于10
+        let concatedPoints = [splitedPoints[0]];
+        let j;
+        for(j = 1; j < splitedPoints.length - 1; j++){
+            //console.log(splitedPoints[i].velocityGroup,concatedPoints[concatedPoints.length-1].velocityGroup,splitedPoints[i+1].velocityGroup);
+            //console.log('端点距离：',calcDistanceOfPoints(splitedPoints[j].points));
+            if(splitedPoints[j].points.length < 10 && calcDistanceOfPoints(splitedPoints[j].points) < 50 && concatedPoints[concatedPoints.length-1].velocityGroup == splitedPoints[j+1].velocityGroup){
+                //console.log('等于：' ,concatedPoints[concatedPoints.length - 1].points,splitedPoints[i].points)
+                concatedPoints[concatedPoints.length - 1].points = concatedPoints[concatedPoints.length - 1].points.concat(splitedPoints[j].points).concat(splitedPoints[j+1].points);
+                ++j;
+                //splitedPoints[i].points.length = 0;
+                //splitedPoints[i] = null;
+            }else{
+                concatedPoints.push(splitedPoints[j]);
+            }
+        }
+        if(j < splitedPoints.length){ //倒数第二段不是毛刺的时候，j只能到length-1，这个时候需要把最后一项加进concatedPoints
+            concatedPoints.push(splitedPoints[splitedPoints.length - 1]);
+        }
+        concatedPoints.startTime = splitedPoints.startTime;
+        concatedPoints.endTime = splitedPoints.endTime;
+        return concatedPoints;
     }
+    function convertPoints(points){
+        var pointsGroupByTime = splitDatapointsByTime(points);
+        pointsGroupByTime = pointsGroupByTime.map(pointsGroup => splitDatapointsByVelocity(pointsGroup));
+        pointsGroupByTime.count = points.length;
+        return pointsGroupByTime;
+    };
     function getBMapPoint(point){
         var bdGps = GPS.GPSToBaidu(point.lat, point.lon);
         return new BMap.Point(bdGps.lng, bdGps.lat);
@@ -164,11 +224,11 @@
         var _this = this;
         this._api.getDataPoints(deviceId, {datastream_id:'Gps', start: this.start, end: this.end, limit: $pointCount.value}).then(function(res){
             console.log('api调用完成，服务器返回data为：', res);
-            $log.innerHTML = '当前第1页，本次共渲染' + res.data.count + '个点';
             if(res.data.cursor){ //加入第二页的corsor
                 _this.cursorListOfPageIndex[1] = res.data.cursor;
-            }
-            var splitedPoints = splitDatapointsByVelocity(res.data.datastreams[0].datapoints);
+            }            
+            var splitedPoints = convertPoints(res.data.datastreams[0].datapoints);
+            $log.innerHTML = '当前第1页，本次共渲染' + splitedPoints.count + '个点';
             pageControl.baiduMap.resetMarker(splitedPoints);
             _this.pointsCache[1] = splitedPoints;
         });
@@ -190,7 +250,8 @@
             if(res.data.cursor){ //加入下一页的corsor
                 _this.cursorListOfPageIndex[pageIndex + 1] = res.data.cursor;
             }
-            var splitedPoints = splitDatapointsByVelocity(res.data.datastreams[0].datapoints);
+            //var pointsTimeGroup = splitDatapointsByTime(res.data.datastreams[0].datapoints);
+            var splitedPoints = convertPoints(res.data.datastreams[0].datapoints);
             pageControl.baiduMap.resetMarker(splitedPoints);
             _this.pointsCache[cursor] = splitedPoints;
             $log.innerHTML = '当前第' + (pageIndex + 1) + '页，本次共渲染' + splitedPoints.count + '个点';
@@ -277,7 +338,16 @@
             resetMarker: function(splitedPoints){
                 this.map.clearOverlays();
                 var _this = this;
-                splitedPoints.forEach(item => {
+                var edgePoints = [];
+                splitedPoints.forEach(pointsGroup => {
+                    edgePoints = edgePoints.concat(_this.drawGroup(pointsGroup));
+                });
+                this.map.setViewport(edgePoints);
+            },
+            drawGroup: function(pointsGroup){
+                var _this = this;
+                var count = 0;
+                pointsGroup.forEach(item => {
                     _this.drawLine(item.points, VelocityGroupColor[item.velocityGroup]);
                 });
                 //加入marker
@@ -285,19 +355,19 @@
                     imageSize: new BMap.Size(50, 40),
                     anchor: new BMap.Size(12, 40)
                 });
-                var markerStart = new BMap.Marker(splitedPoints[0].points[0], {icon:iconStart});
+                var markerStart = new BMap.Marker(pointsGroup[0].points[0], {icon:iconStart});
                 var iconEnd = new BMap.Icon('/resource/2019/markers_bg.png', new BMap.Size(25,40), {
                     imageOffset: new BMap.Size(-25,0),
                     imageSize: new BMap.Size(50, 40),
                     anchor: new BMap.Size(12, 40)
                 });
-                var endPoints = splitedPoints[splitedPoints.length - 1].points;
+                var endPoints = pointsGroup[pointsGroup.length - 1].points;
                 var markerEnd = new BMap.Marker(endPoints[endPoints.length - 1], {icon:iconEnd});
-                markerStart.setLabel(new BMap.Label(splitedPoints.startTime, {offset: new BMap.Size(-20,-20)}));
-                markerEnd.setLabel(new BMap.Label(splitedPoints.endTime, {offset: new BMap.Size(-20,-20)}));
+                markerStart.setLabel(new BMap.Label(pointsGroup.startTime, {offset: new BMap.Size(-20,-20)}));
+                markerEnd.setLabel(new BMap.Label(pointsGroup.endTime, {offset: new BMap.Size(-20,-20)}));
                 this.map.addOverlay(markerStart); 
                 this.map.addOverlay(markerEnd); 
-                this.map.setViewport([splitedPoints[0].points[0], endPoints[endPoints.length - 1]]);
+                return [pointsGroup[0].points[0], endPoints[endPoints.length - 1]];
             },
             drawLine: function(pointsArr, color){
                  var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
