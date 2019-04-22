@@ -3,9 +3,11 @@
   title: car-location
 ---
 <style>
-    
     h2{
         font-size: 1rem;
+    }
+    input{
+        font-size: 0.8rem;
     }
     html{
         height: 100%;
@@ -27,8 +29,7 @@
     }
     @media screen and (max-width: 500px) {
         body,html {
-            font-size: 28px;
-            
+            font-size: 20px;
         }
         h2{
             display: none;
@@ -132,6 +133,7 @@
             previousVelocityGroup = getVelocityGroup(currentPointsCost.velocity),
             reallyDistance = currentPointsCost.distance,
             airDistance = reallyDistance,
+            distancePointCount = 1,
             currentStartPoint = dataPoints[0],
             tempPoints = {
                 points: [getBMapPoint(dataPoints[0].value), getBMapPoint(dataPoints[1].value)],
@@ -144,9 +146,14 @@
             reallyDistance += currentPointsCost.distance; //实际距离
             airDistance = GPS.distance(currentStartPoint.value.lat, currentStartPoint.value.lon, dataPoints[i].value.lat, dataPoints[i].value.lon); //航空距离
             currentVelocityGroup = getVelocityGroup(currentPointsCost.velocity);
+            //console.log('reallyDistance:',reallyDistance,'airDistance',airDistance);
             if(currentVelocityGroup == previousVelocityGroup){ //当前两个点的速度和前两个点的速度属于同一个组
-                if(reallyDistance - airDistance < 1){
+                if(reallyDistance - airDistance < 0.02 * ++distancePointCount){
                     tempPoints.points.length = tempPoints.points.length - 1;
+                }else{
+                    reallyDistance = currentPointsCost.distance;
+                    currentStartPoint = dataPoints[i - 1];
+                    distancePointCount = 1;
                 }
                 tempPoints.points.push(getBMapPoint(dataPoints[i].value));
             }else{
@@ -203,7 +210,11 @@
     var $prevPageButton = $('prevPageButton');
     var $nextPageButton = $('nextPageButton');
     var $searchButton = $('searchButton');
+    var $searchForm = $('searchForm');
     var $log = $('log');
+    $searchForm.onsubmit = function(e){
+        e.preventDefault();
+    }
     $('baiduMapCtn').style.height = (document.body.offsetHeight - $('head').offsetHeight) + 'px'
     function CarMarker(deviceId, start, end){
         var _this = this;
@@ -347,9 +358,12 @@
             drawGroup: function(pointsGroup){
                 var _this = this;
                 var count = 0;
+                console.log(pointsGroup);
                 pointsGroup.forEach(item => {
+                    count+= item.points.length;
                     _this.drawLine(item.points, VelocityGroupColor[item.velocityGroup]);
                 });
+                console.log('实际渲染',count);
                 //加入marker
                 var iconStart = new BMap.Icon('/resource/2019/markers_bg.png', new BMap.Size(25,40), {
                     imageSize: new BMap.Size(50, 40),
