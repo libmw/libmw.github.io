@@ -35,6 +35,9 @@
             display: none;
         }
     }
+    #apiKey{
+        width: 18em;
+    }
 </style>
 <div id="head">
     <form id="searchForm">
