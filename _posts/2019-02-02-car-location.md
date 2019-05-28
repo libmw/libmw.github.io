@@ -68,6 +68,15 @@
     function $(id){
         return document.getElementById(id);
     }
+    function getParameter(key){
+        var searchArr = location.search.slice(1).split('&');
+        for(let i = 0; i < searchArr.length; i++){
+            let searchItem = searchArr[i].split('=');
+            if(searchItem[0] == key){
+                return decodeURIComponent(searchItem[1]);
+            }
+        }
+    }
     /* function getNormalizedDateTimeString(date){//date是标准的Date对象
         var iosString = date.toISOString();
         return iosString.replace(/\..+/, '');
@@ -286,10 +295,14 @@
             this.baiduMap.init(this.baiduMapCtn);
             var _this = this;
             this.initTimeRound(new Date());
-            if(localStorage.getItem('apiKey')){//0XlwMJm8U42KEZ394N4p8hm2p=s=
+            if(getParameter('apikey')){
+                $apiKey.value = getParameter('apikey');
+            }else if(localStorage.getItem('apiKey')){//0XlwMJm8U42KEZ394N4p8hm2p=s=
                 $apiKey.value = localStorage.getItem('apiKey');
             }
-            if(localStorage.getItem('deviceId')){//517162506
+            if(getParameter('deviceid')){
+                $deviceId.value = getParameter('deviceid');
+            }else if(localStorage.getItem('deviceId')){//517162506
                 $deviceId.value = localStorage.getItem('deviceId');
             }
             if(localStorage.getItem('pointCount')){//500
