@@ -42,9 +42,9 @@
 <div id="head">
     <form id="searchForm">
         <label for="apiKey">ApiKey：</label>
-        <input id="apiKey" type="text" value="0XlwMJm8U42KEZ394N4p8hm2p=s=" />
+        <input id="apiKey" type="text" />
         <label for="deviceId">设备ID：</label>
-        <input id="deviceId" type="text" value="517162506" />
+        <input id="deviceId" type="text" />
         <label for="startTime">开始时间：</label>
         <input id="startTime" type="datetime-local" />
         <label for="endTime">结束时间：</label>
