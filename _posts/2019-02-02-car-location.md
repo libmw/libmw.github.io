@@ -59,6 +59,7 @@
     </form>
     <div id="log" class="log">
     </div>
+    <div id="lineGroupControl"></div>
 </div>
 <div class="container" id="baiduMapCtn"></div>
 <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
@@ -224,6 +225,7 @@
     var $searchButton = $('searchButton');
     var $searchForm = $('searchForm');
     var $log = $('log');
+    var $lineGroupControl = $('lineGroupControl');
     $searchForm.onsubmit = function(e){
         e.preventDefault();
     }
@@ -252,7 +254,7 @@
             }            
             var splitedPoints = convertPoints(res.data.datastreams[0].datapoints);
             $log.innerHTML = '当前第1页，本次共渲染' + splitedPoints.count + '个点';
-            pageControl.baiduMap.resetMarker(splitedPoints);
+            pageControl.renderLineGroup(splitedPoints);
             _this.pointsCache[1] = splitedPoints;
         });
     }
@@ -264,7 +266,7 @@
         }
         var splitedPoints = this.pointsCache[cursor];
         if(splitedPoints){
-            pageControl.baiduMap.resetMarker(splitedPoints);
+            pageControl.renderLineGroup(splitedPoints);
             $log.innerHTML = '当前第' + (pageIndex + 1) + '页，本次共渲染' + splitedPoints.count + '个点';
             return;
         }
@@ -275,7 +277,7 @@
             }
             //var pointsTimeGroup = splitDatapointsByTime(res.data.datastreams[0].datapoints);
             var splitedPoints = convertPoints(res.data.datastreams[0].datapoints);
-            pageControl.baiduMap.resetMarker(splitedPoints);
+            pageControl.renderLineGroup(splitedPoints);
             _this.pointsCache[cursor] = splitedPoints;
             $log.innerHTML = '当前第' + (pageIndex + 1) + '页，本次共渲染' + splitedPoints.count + '个点';
         });
@@ -336,6 +338,17 @@
             $nextPageButton.onclick = function(){
                 _this.carMarker.renderNextPage();
             }
+            $lineGroupControl.onclick = function(e){
+                //console.log(e,e.target.nodeName,e.target.checked,e.target.getAttribute('data-index'));
+                var target = e.target;
+                var currentLineGroup;
+                if(target.nodeName.toUpperCase() == 'INPUT'){
+                    var index = parseInt(target.getAttribute('data-index'));
+                    var showCurrent = target.checked;
+                    currentLineGroup = _this.lineGroupArr[index];
+                    currentLineGroup[showCurrent ? 'show' : 'hide']();
+                }
+            }
         },
         initTimeRound: function(date){
             var dateNow = new Date(date);
@@ -350,78 +363,96 @@
                 // 创建点坐标  
                 map.centerAndZoom(point, 15);
                 // 初始化地图，设置中心点坐标和地图级别 
-                var marker = new BMap.Marker(point); // 创建点
                 map.enableScrollWheelZoom(true);
-                map.addOverlay(marker);  
-                this.marker = marker;
                 this.map = map;
-            },
-            generateMarker: function(point){
-                // 初始化地图，设置中心点坐标和地图级别 
-                var marker = new BMap.Marker(point); // 创建点
-                this.map.addOverlay(marker);  
-                return marker;
-            },
-            resetMarker: function(splitedPoints){
-                this.map.clearOverlays();
-                var _this = this;
-                var edgePoints = [];
-                splitedPoints.forEach(pointsGroup => {
-                    edgePoints = edgePoints.concat(_this.drawGroup(pointsGroup));
-                });
-                this.map.setViewport(edgePoints);
-            },
-            drawGroup: function(pointsGroup){
-                var _this = this;
-                var count = 0;
-                console.log(pointsGroup);
-                pointsGroup.forEach(item => {
-                    count+= item.points.length;
-                    _this.drawLine(item.points, VelocityGroupColor[item.velocityGroup]);
-                });
-                console.log('实际渲染',count);
-                //加入marker
-                var iconStart = new BMap.Icon('/resource/2019/markers_bg.png', new BMap.Size(25,40), {
-                    imageSize: new BMap.Size(50, 40),
-                    anchor: new BMap.Size(12, 40)
-                });
-                var markerStart = new BMap.Marker(pointsGroup[0].points[0], {icon:iconStart});
-                var iconEnd = new BMap.Icon('/resource/2019/markers_bg.png', new BMap.Size(25,40), {
-                    imageOffset: new BMap.Size(-25,0),
-                    imageSize: new BMap.Size(50, 40),
-                    anchor: new BMap.Size(12, 40)
-                });
-                var endPoints = pointsGroup[pointsGroup.length - 1].points;
-                var markerEnd = new BMap.Marker(endPoints[endPoints.length - 1], {icon:iconEnd});
-                markerStart.setLabel(new BMap.Label(pointsGroup.startTime, {offset: new BMap.Size(-20,-20)}));
-                markerEnd.setLabel(new BMap.Label(pointsGroup.endTime, {offset: new BMap.Size(-20,-20)}));
-                this.map.addOverlay(markerStart); 
-                this.map.addOverlay(markerEnd); 
-                return [pointsGroup[0].points[0], endPoints[endPoints.length - 1]];
-            },
-            drawLine: function(pointsArr, color){
-                 var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
-                    scale: 0.6,//图标缩放大小
-                    strokeColor:'#fff',//设置矢量图标的线填充颜色
-                    strokeWeight: '2',//设置线宽
-                });
-                var icons = new BMap.IconSequence(sy, '10', '30'); 
-                var polyline =new BMap.Polyline(pointsArr, {
-                    enableEditing: false,//是否启用线编辑，默认为false
-                    enableClicking: false,//是否响应点击事件，默认为true
-                    //icons:[icons],
-                    strokeWeight:'7',//折线的宽度，以像素为单位
-                    strokeOpacity: 1,//折线的透明度，取值范围0 - 1
-                    strokeColor: color //折线颜色
-                });
-                this.map.addOverlay(polyline);
             }
-        }        
+        },
+        renderLineGroup: function(splitedPoints){
+            var map = this.baiduMap.map;
+            map.clearOverlays();
+            var _this = this;
+            var edgePoints = [];
+            var lineGroupArr = [];
+            splitedPoints.forEach(pointsGroup => {
+                let lineGroup = new LineGroup(map, pointsGroup);
+                edgePoints = edgePoints.concat([lineGroup.startPoint, lineGroup.endPoint]);
+                lineGroupArr.push(lineGroup);
+            });
+            map.setViewport(edgePoints);
+            this.lineGroupArr = lineGroupArr;
+            this.renderLineGroupController(lineGroupArr);
+        },
+        renderLineGroupController: function(lineGroupArr){
+            var html = '';
+            lineGroupArr.forEach((i, index) => {
+                html += `<label><input type="checkbox" data-index="${index}" checked />第${index + 1}段</label>`;
+            });
+            $lineGroupControl.innerHTML = html;
+        } 
     };
     pageControl.init(); 
-    /* new CarMarker(517341974);
-    new CarMarker(517341975);
-    new CarMarker(517341976);
-    new CarMarker(517341977);
-    new CarMarker(517341978); */
+    function LineGroup(baiduMap, pointsGroup){
+        this.baiduMap = baiduMap;
+        this.startPoint = pointsGroup[0].points[0];
+        var endPoints = pointsGroup[pointsGroup.length - 1].points;
+        this.endPoint = endPoints[endPoints.length - 1];
+        this.overlayGroup = [];
+        this.draw(pointsGroup);
+    }
+    LineGroup.prototype.draw = function(pointsGroup){
+        var _this = this;
+        var count = 0;
+        pointsGroup.forEach(item => {
+            count += item.points.length;
+            var polyline = _this.drawLine(item.points, VelocityGroupColor[item.velocityGroup]);
+            this.overlayGroup.push(polyline);
+        });
+        //起始点
+        var startIcon = new BMap.Icon('/resource/2019/markers_bg.png', new BMap.Size(25,40), {
+            imageSize: new BMap.Size(50, 40),
+            anchor: new BMap.Size(12, 40)
+        });
+        var startMarker = new BMap.Marker(this.startPoint, {icon: startIcon});
+        startMarker.setLabel(new BMap.Label(pointsGroup.startTime, {offset: new BMap.Size(-20,-20)}));
+        //结束点
+        var endIcon = new BMap.Icon('/resource/2019/markers_bg.png', new BMap.Size(25,40), {
+            imageOffset: new BMap.Size(-25,0),
+            imageSize: new BMap.Size(50, 40),
+            anchor: new BMap.Size(12, 40)
+        });
+        var endMarker = new BMap.Marker(this.endPoint, {icon: endIcon});
+        endMarker.setLabel(new BMap.Label(pointsGroup.endTime, {offset: new BMap.Size(-20,-20)}));
+        this.baiduMap.addOverlay(startMarker); 
+        this.baiduMap.addOverlay(endMarker); 
+        this.overlayGroup.push(startMarker);
+        this.overlayGroup.push(endMarker);
+    }
+    LineGroup.prototype.drawLine = function(pointsArr, color){
+        var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+            scale: 0.6,//图标缩放大小
+            strokeColor:'#fff',//设置矢量图标的线填充颜色
+            strokeWeight: '2',//设置线宽
+        });
+        var icons = new BMap.IconSequence(sy, '10', '30'); 
+        var polyline = new BMap.Polyline(pointsArr, {
+            enableEditing: false,//是否启用线编辑，默认为false
+            enableClicking: false,//是否响应点击事件，默认为true
+            //icons:[icons],
+            strokeWeight:'7',//折线的宽度，以像素为单位
+            strokeOpacity: 1,//折线的透明度，取值范围0 - 1
+            strokeColor: color //折线颜色
+        });
+        this.baiduMap.addOverlay(polyline);
+        return polyline;
+    }
+    LineGroup.prototype.show = function(){
+        this._setVisible(1);
+    }
+    LineGroup.prototype.hide = function(){
+        this._setVisible(0);
+    }
+    LineGroup.prototype._setVisible = function(visible){
+        var map = this.baiduMap;
+        this.overlayGroup.forEach(overlay => overlay[visible ? 'show' : 'hide']());
+    }
 </script>
