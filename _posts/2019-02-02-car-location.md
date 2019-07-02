@@ -324,13 +324,10 @@
                 _this.carMarker = new CarMarker($deviceId.value, $startTime.value, $endTime.value);
             }
             $prevDateButton.onclick = function(){
-                var dateCurrent = new Date($startTime.value);
-                var dateNew = new Date(+dateCurrent - 3600 * 1000 * 24);
-                _this.initTimeRound(dateNew);
-                $searchButton.click();
+                _this.dateChange(-1);
             }
             $nextDateButton.onclick = function(){
-                _this.carMarker.renderPrevPage();
+                _this.dateChange(1);
             }
             $prevPageButton.onclick = function(){
                 _this.carMarker.renderPrevPage();
@@ -354,6 +351,12 @@
             var dateNow = new Date(date);
             $startTime.value = `${dateNow.getFullYear()}-${getDoubleDigit(dateNow.getMonth() + 1)}-${getDoubleDigit(dateNow.getDate())}T00:00:01`;
             $endTime.value = `${dateNow.getFullYear()}-${getDoubleDigit(dateNow.getMonth() + 1)}-${getDoubleDigit(dateNow.getDate())}T23:59:59`;
+        },
+        dateChange: function(offset){
+            var dateCurrent = new Date($startTime.value);
+            var dateNew = new Date(+dateCurrent + offset* 3600 * 1000 * 24);
+            this.initTimeRound(dateNew);
+            $searchButton.click();
         },
         baiduMap: {
             init: function(ctn){
