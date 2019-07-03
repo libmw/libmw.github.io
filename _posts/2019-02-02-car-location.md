@@ -373,7 +373,6 @@
         renderLineGroup: function(splitedPoints){
             var map = this.baiduMap.map;
             map.clearOverlays();
-            var _this = this;
             var edgePoints = [];
             var lineGroupArr = [];
             splitedPoints.forEach(pointsGroup => {
@@ -384,6 +383,7 @@
             map.setViewport(edgePoints);
             this.lineGroupArr = lineGroupArr;
             this.renderLineGroupController(lineGroupArr);
+            this.asyncLogReallyPointsCount(splitedPoints);
         },
         renderLineGroupController: function(lineGroupArr){
             var html = '';
@@ -391,7 +391,16 @@
                 html += `<label><input type="checkbox" data-index="${index}" checked />第${index + 1}段</label>`;
             });
             $lineGroupControl.innerHTML = html;
-        } 
+        },
+        asyncLogReallyPointsCount: function(splitedPoints){
+            setTimeout(function(){
+                var count = 0;
+                splitedPoints.forEach(i => {
+                    i.forEach(j => count += j.points.length);
+                });
+                $log.innerHTML += `&nbsp;实际渲染${count}个点`;
+            }, 100);
+        }
     };
     pageControl.init(); 
     function LineGroup(baiduMap, pointsGroup){
