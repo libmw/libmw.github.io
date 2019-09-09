@@ -47,7 +47,7 @@
 
 ### 搭建本地jekyll环境
 
-1. 首先下载并安装[railsinstaller](http://railsinstaller.org/en)，安装好以后gem和ruby就都有了![](/resource/201502/1.png)
+1. 首先下载并安装[rubyinstaller](https://rubyinstaller.org/downloads/)，安装好以后gem和ruby就都有了![](/resource/201502/1.png)[2019.9.9更新：以前的railinstaller安装的ruby版本不支持最新的jekyll，因此直接装rubyinstaller即可，全量安装是可以的，不全量没测试]
 
 2. 然后执行 `gem install jekyll` 安装jekyll，注意有时候要执行多次才能成功![](/resource/201502/2.png)
 
