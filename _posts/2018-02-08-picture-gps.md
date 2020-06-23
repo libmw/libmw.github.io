@@ -3,6 +3,7 @@
   title: 照片位置查看器
 ---
 <style>
+
     
     h2{
         font-size: 1rem;
@@ -52,21 +53,27 @@
             display: block;
         }
     }
+
 </style>
 
 <h2>把图片拖进来</h2>
 <div class="picker"><input type="file" id="filePicker"></div>
-<div id="makeAndModel" style="height: 30px;"></div>
+<div id="makeAndModel" style="height: 30px; "></div>
 <div class="map_shift" id="mapShift">
+
     <button data-type="baidu">百度地图</button>
     <button data-type="google">谷歌地图</button>
+
 </div>
 <div class="container" id="baiduMapCtn"></div>
 <div class="container" id="googleMapCtn"></div>
 <div class="detail" id="picDetail"></div>
 <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak=XwGhtOZnTOQk7lFssFiI1GR3"></script>
 <script src="/resource/2018/exif.js"></script>
+<script src="/resource/2019/map_convertor.js"></script>
+
 <script>
+
     var pageControl = {
         init: function(){
             this.baiduMapCtn = document.getElementById("baiduMapCtn");
@@ -134,6 +141,15 @@
                 this.map = map;
             },
             setPosition: function(x,y){
+                var bdGps = GPS.GPSToBaidu(y, x);
+                var bdPoint = new BMap.Point(bdGps.lng, bdGps.lat);
+                var bdMarker = new BMap.Marker(bdPoint); // 创建点
+                this.map.addOverlay(bdMarker); 
+                
+                return bdPoint;
+                return;
+                
+
                 var ggPoint = new BMap.Point(x,y);
                 var convertor = new BMap.Convertor();
                 var pointArr = [];
@@ -147,6 +163,7 @@
         },
         googleMap: {
             init: function(ctn){
+                return;
                 var point = new google.maps.LatLng(42.882688, -90.579412);
                 //初始化
                 var mapOptions = {
@@ -175,7 +192,8 @@
         getFiles: function (fileList){
             var _this = this;
             var imgCtn = document.getElementById('imgCtn');
-            for(var i = 0; i < fileList.length; i++){
+            const zoomPoints = [];
+            for(let i = 0; i < fileList.length; i++){
                 var file = fileList[i];
                 if(file.type.indexOf('image') === -1){
                     console.log('此文件不是图片：', file.name);
@@ -191,8 +209,15 @@
                         var lat = EXIF.getTag(this, "GPSLatitude");
                         var GPSLongitudeRef = EXIF.getTag(this, "GPSLongitudeRef");
                         var GPSLatitudeRef = EXIF.getTag(this, "GPSLatitudeRef");
-                        makeAndModel.innerHTML = `${lon} ${GPSLongitudeRef} ${lat} ${GPSLatitudeRef}`;
-                        _this.renderPoint(lon, lat, GPSLongitudeRef, GPSLatitudeRef);
+                        makeAndModel.innerHTML = `${lon} ${GPSLongitudeRef} ${lat} ${GPSLatitudeRef}` ;
+                        const {x, y} = _this.renderPoint(lon, lat, GPSLongitudeRef, GPSLatitudeRef);
+                        console.log(x,y)
+                        const bdPoints = _this.currentMap.setPosition(x, y);
+                        console.log(i)
+                        zoomPoints.push(bdPoints);
+                        if(zoomPoints.length === 1){
+                            _this.currentMap.map.centerAndZoom(bdPoints, 15);
+                        }
                         _this.renderPictureDetail(this);
                     });
                 }
@@ -208,8 +233,10 @@
         renderPoint: function (lon, lat, GPSLongitudeRef, GPSLatitudeRef){
             var x = this.ConvertDMSToDD(+lon[0], +lon[1], +lon[2], GPSLongitudeRef);
             var y = this.ConvertDMSToDD(+lat[0], +lat[1], +lat[2], GPSLatitudeRef);
-            console.log(x,y)
-            this.currentMap.setPosition(x, y);
+            return {
+                x,
+                y
+            };
         },
         renderPictureDetail: function (obj){
             this.picDetail.innerHTML = '';
@@ -233,5 +260,7 @@
     function initializegooglemap(){
         pageControl.init();  
     }
+    pageControl.init();  
+
 </script>
-<script src="//ditu.google.cn/maps/api/js?v=3&amp;sensor=false&amp;language=en&amp;callback=initializegooglemap"></script>
+<script src="//ditu.google.cn/maps/api/js?v=3&amp; sensor=false&amp; language=en&amp; callback=initializegooglemap"></script>
