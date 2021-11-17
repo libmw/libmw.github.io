@@ -63,6 +63,8 @@
 
     <button data-type="baidu">百度地图</button>
     <button data-type="google">谷歌地图</button>
+    <button data-type="googleSatellite">谷歌卫星</button>
+    <label for="satellite">卫星图</label><checkbox id="satellite" />
 
 </div>
 <div class="container" id="baiduMapCtn"></div>
