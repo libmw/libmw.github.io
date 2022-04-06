@@ -51,8 +51,25 @@
 
 2. 然后执行 `gem install jekyll` 安装jekyll，注意有时候要执行多次才能成功![](/resource/201502/2.png)
 
-3. 最后进入git项目的根目录，运行`jekyll serve` ，然后访问http://127.0.0.1:4000/便能看到效果了
+3. 执行`gem install bundler`
 
-4. 本地测试好以后，把代码提交到github，github会自动生成静态网站。注意jekyll生成的_site文件夹不需要提交，这个是本地的静态网站文件夹
+4. 执行`bundle init`
+
+5. 替换Gemfile内容为：
+
+source "https://rubygems.org"
+
+gem "webrick", "~> 1.7"
+gem 'wdm'
+gem 'jekyll'
+
+6. 执行`bundle install`
+
+7. 最后进入git项目的根目录，运行`jekyll serve` ，然后访问http://127.0.0.1:4000/便能看到效果了
+
+8. 本地测试好以后，把代码提交到github，github会自动生成静态网站。注意jekyll生成的_site文件夹不需要提交，这个是本地的静态网站文件夹
 
 > jekyll还有更多高级的用法，可以参考官方网站的[源代码](https://github.com/jekyll/jekyll/tree/master/site),里面包含了翻页，页面变量，页面数据等用法
+
+
+> 以上内容和最初版本的jekyll安装方式有变动，增加了bundle部分。参考的<https://idratherbewriting.com/documentation-theme-jekyll/mydoc_install_jekyll_on_windows.html#install-bundler>。其实和npm的安装方式类似，需要把依赖装好，否则会报错找不到依赖模块。但是一旦一个项目bundle install了另一个项目就不需要了再bundle install了也是奇怪，可能模块默认是全局的。另外`gem "webrick", "~> 1.7"`这一行不要有可能也可以，没试过。
