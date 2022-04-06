@@ -1,5 +1,5 @@
 ---
-  layout: pure
+  layout: main
   title: 起名神器
 ---
 <script>

@@ -1,5 +1,5 @@
 ---
-  layout: pure
+  layout: main
   title: 照片位置查看器
 ---
 <style>

@@ -1,5 +1,5 @@
 ---
-  layout: pure
+  layout: main
   title: 飞度保养手册
 ---
 <style>

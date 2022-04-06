@@ -1,5 +1,5 @@
 ---
-  layout: pure
+  layout: main
   title: car-location
 ---
 <style>
