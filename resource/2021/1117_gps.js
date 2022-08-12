@@ -34,12 +34,22 @@ var pageControl = {
         "http://mt2.google.cn/vt/lyrs=y&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
       zIndex: 3,
     });
+
+    const amapSatelliteLayer = new AMap.TileLayer.Satellite();
+    const amapRoadNetLayer = new AMap.TileLayer.RoadNet();
+
     const map = new AMap.Map(mapContainer, {
       resizeEnable: true,
       zoom: 15,
       center: [116.397428, 39.90923],
-      layers: [googleLayer],
+      layers: [amapSatelliteLayer, amapRoadNetLayer],
     });
+
+    const testGoogleImage = new Image();
+    testGoogleImage.src = `//mt2.google.cn/vt/lyrs=y&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil?t=${+Math.random()}`;
+    testGoogleImage.onload = () => {
+      map.setLayers([googleLayer]);
+    };
     /* var marker = new AMap.Marker({
       position: new AMap.LngLat(116.397428, 39.90923), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
       title: "北京",
@@ -107,7 +117,7 @@ var pageControl = {
         })
       );
     }
-    
+
     return markers;
   },
   getFiles: function (fileList) {
@@ -216,9 +226,8 @@ var pageControl = {
         gps2Google(GPSLongitude)
       )}${GPSLongitudeRef}`;
       this.dumpDetail("gps坐标", `${lon},${lat}`, googleUrl);
-    }else{
-      this.dumpDetail("gps坐标", '无GPS坐标，统一显示在天安门');
-
+    } else {
+      this.dumpDetail("gps坐标", "无GPS坐标，统一显示在天安门");
     }
 
     var detailFields = {
