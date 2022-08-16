@@ -110,7 +110,7 @@ var pageControl = {
         new AMap.Marker({
           position: bdPoint,
           content: imgSrc
-            ? `<a href="${imgSrc}" target="_blank" class="img-marker" style='background-image: url(${imgSrc})'></a>`
+            ? `<a href="${imgSrc}" target="_blank" title="${pictureDetail.name}" class="img-marker" style='background-image: url(${imgSrc})'></a>`
             : "",
           // 以 icon 的 [center bottom] 为原点
           offset: new AMap.Pixel(-100, -135),
@@ -140,6 +140,7 @@ var pageControl = {
         //imgCtn.appendChild(tempImg);
         EXIF.getData(file, function () {
           const pictureDetail = _this.getPictureDetail(this);
+          pictureDetail.name = file.name;
           console.log("pictureDetail: ", pictureDetail);
           markerList = markerList.concat(
             _this.generateMarker(pictureDetail, imgSrc)
@@ -231,6 +232,7 @@ var pageControl = {
     }
 
     var detailFields = {
+      name: "名称",
       DateTimeOriginal: "拍摄时间",
       Make: "品牌",
       Model: "型号",
@@ -272,7 +274,7 @@ var pageControl = {
   dumpDetail: function (name, value, url) {
     var div = document.createElement("div");
     const mainHTML = `
-              <em>${name}<em>:<span>${value}</span>
+              <em>${name}</em>：<span>${value}</span>
           `;
     if (url) {
       div.innerHTML = `<a href=${url} target="_blank">${mainHTML}</a>`;
