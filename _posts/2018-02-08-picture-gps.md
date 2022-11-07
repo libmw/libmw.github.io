@@ -2,6 +2,7 @@
   layout: main
   title: 照片位置查看器
 ---
+
 <style>
 
     
@@ -171,6 +172,7 @@
                 var mapOptions = {
                     center: point,
                     zoom: 3,
+                    zooms: [2,30]
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
                 var map = new google.maps.Map(ctn, mapOptions);
