@@ -31,7 +31,7 @@ var pageControl = {
 
     const googleLayer = new AMap.TileLayer({
       tileUrl:
-        "http://mt2.google.cn/vt/lyrs=y&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
+        "http://mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
       zIndex: 3,
     });
 
@@ -46,7 +46,7 @@ var pageControl = {
     });
 
     const testGoogleImage = new Image();
-    testGoogleImage.src = `//mt2.google.cn/vt/lyrs=y&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil?t=${+Math.random()}`;
+    testGoogleImage.src = `//mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil?t=${+Math.random()}`;
     testGoogleImage.onload = () => {
       map.setLayers([googleLayer]);
     };

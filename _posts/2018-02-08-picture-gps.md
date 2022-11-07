@@ -265,4 +265,4 @@
     pageControl.init();  
 
 </script>
-<script src="//ditu.google.cn/maps/api/js?v=3&amp; sensor=false&amp; language=en&amp; callback=initializegooglemap"></script>
+<script src="//ditu.google.com/maps/api/js?v=3&amp; sensor=false&amp; language=en&amp; callback=initializegooglemap"></script>
