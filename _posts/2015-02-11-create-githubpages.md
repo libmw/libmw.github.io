@@ -47,27 +47,20 @@
 
 ### 搭建本地jekyll环境
 
-1. 首先下载并安装[rubyinstaller](https://rubyinstaller.org/downloads/)，安装好以后gem和ruby就都有了![](/resource/201502/1.png)[2019.9.9更新：以前的railinstaller安装的ruby版本不支持最新的jekyll，因此直接装rubyinstaller即可，全量安装是可以的，不全量没测试]
+> 参考官方文档： <https://jekyllrb.com/docs/installation/windows/>
 
-2. 然后执行 `gem install jekyll` 安装jekyll，注意有时候要执行多次才能成功![](/resource/201502/2.png)
+注意：
 
-3. 执行`gem install bundler`
+1.rubyinstaller安装的时候需要选择默认配置，除了安装位置(默认是直接C盘建立一个根目录，改成program files好些)
 
-4. 执行`bundle init`
+2.第二步就是那个黑色弹窗，选择3，要等很久才能安装完，各种秘钥，成功会会说：https://jekyllrb.com/docs/installation/windows/
 
-5. 替换Gemfile内容为：
+3.第三步要打开新窗口执行gem install jekyll bundler，也是非常漫长，十多分钟
 
-source "https://rubygems.org"
 
-gem "webrick", "~> 1.7"
-gem 'wdm'
-gem 'jekyll'
+最后进入git项目的根目录，运行`jekyll serve` ，然后访问http://127.0.0.1:4000/便能看到效果了
 
-6. 执行`bundle install`
-
-7. 最后进入git项目的根目录，运行`jekyll serve` ，然后访问http://127.0.0.1:4000/便能看到效果了
-
-8. 本地测试好以后，把代码提交到github，github会自动生成静态网站。注意jekyll生成的_site文件夹不需要提交，这个是本地的静态网站文件夹
+本地测试好以后，把代码提交到github，github会自动生成静态网站。注意jekyll生成的_site文件夹不需要提交，这个是本地的静态网站文件夹
 
 > jekyll还有更多高级的用法，可以参考官方网站的[源代码](https://github.com/jekyll/jekyll/tree/master/site),里面包含了翻页，页面变量，页面数据等用法
 
