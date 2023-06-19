@@ -42,6 +42,14 @@
     display: flex;
   }
 
+  .buttons{
+    padding: 10px;
+  }
+  .buttons button{
+      display: block;
+      margin: 10px 0;
+  }
+
   .otherMsg{
     padding-left: 10px;
   }
@@ -82,6 +90,10 @@
   </div>
   <div id="makeAndModel" style="height: 30px; "></div>
   <footer>
+    <div class="buttons">
+      <button id="btnAmapTile">高德瓦片</button>
+      <button id="btnGoogleTile">谷歌瓦片</button>
+    </div>
     <div class="detail" id="picDetail"></div>
     <div class="otherMsg"></div>
   </footer>

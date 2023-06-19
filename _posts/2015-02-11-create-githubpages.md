@@ -53,12 +53,38 @@
 
 1.rubyinstaller安装的时候需要选择默认配置，除了安装位置(默认是直接C盘建立一个根目录，改成program files好些)
 
-2.第二步就是那个黑色弹窗，选择3，要等很久才能安装完，各种秘钥，成功会会说：https://jekyllrb.com/docs/installation/windows/
+2.第二步就是那个黑色弹窗，选择3，要等很久才能安装完，各种秘钥，到这个界面就差不多了：
 
-3.第三步要打开新窗口执行gem install jekyll bundler，也是非常漫长，十多分钟
+==> 正在更新可信数据库...
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: 深度：0  有效性：  1  已签名：  5  信任度：0-，0q，0n，0m，0f，1u
+gpg: 深度：1  有效性：  5  已签名：  7  信任度：0-，0q，0n，5m，0f，0u
+gpg: 深度：2  有效性：  4  已签名：  2  信任度：4-，0q，0n，0m，0f，0u
+gpg: 下次信任度数据库检查将于 2023-09-12 进行
+gpg: 拉取‘alexey.pawlow@gmail.com’通过 WKD 时出现错误： Connection timed out
+gpg: error reading key: Connection timed out
+gpg: 正在更新 1 把密钥，从 hkps://keyserver.ubuntu.com
+gpg: 密钥 F40D263ECA25678A：“Alexey Pavlov (Alexpux) <alexey.pawlow@gmail.com>” 未改变
+gpg: 处理的总数：1
+gpg:              未改变：1
+
+然后就可以不管这个窗口，开新窗口进入下一步。
+
+3.第三步要打开新窗口执行gem install jekyll bundler，也是非常漫长，十多分钟，完成了就是这样：
+
+A new release of RubyGems is available: 3.4.10 → 3.4.14!
+Run `gem update --system 3.4.14` to update your installation.
+
+
+C:\Users\LMJ>jekyll -v
+jekyll 4.3.1
+
+
 
 
 最后进入git项目的根目录，运行`jekyll serve` ，然后访问http://127.0.0.1:4000/便能看到效果了
+
+> Gemfile 和Gemfile.lock可能导致版本问题报错，如果报错可以删了这两个文件再试。
 
 本地测试好以后，把代码提交到github，github会自动生成静态网站。注意jekyll生成的_site文件夹不需要提交，这个是本地的静态网站文件夹
 

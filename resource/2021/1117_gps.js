@@ -16,6 +16,8 @@ var pageControl = {
   init: function () {
     const mapContainer = $("#mapCtn");
     const fullBtn = $(".fullscreen");
+    const btnAmapTile = $("#btnAmapTile");
+    const btnGoogleTile = $("#btnGoogleTile");
 
     fullBtn.addEventListener("click", () => {
       if (document.fullscreenElement) {
@@ -34,6 +36,7 @@ var pageControl = {
         "http://mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
       zIndex: 3,
     });
+    this.googleLayer=googleLayer;
 
     const amapSatelliteLayer = new AMap.TileLayer.Satellite();
     const amapRoadNetLayer = new AMap.TileLayer.RoadNet();
@@ -42,13 +45,13 @@ var pageControl = {
       resizeEnable: true,
       zoom: 15,
       center: [116.397428, 39.90923],
-      layers: [amapSatelliteLayer, amapRoadNetLayer],
+      
     });
 
     const testGoogleImage = new Image();
     testGoogleImage.src = `//mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil?t=${+Math.random()}`;
     testGoogleImage.onload = () => {
-      map.setLayers([googleLayer]);
+      map.add([googleLayer]);
     };
     /* var marker = new AMap.Marker({
       position: new AMap.LngLat(116.397428, 39.90923), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
@@ -83,6 +86,13 @@ var pageControl = {
     //this.changeMapTo('baidu');
     //点击地图显示坐标
     map.on("click", this.onMapClick);
+
+    btnAmapTile.addEventListener("click", () => {
+      this.setAMapTile();
+    });
+    btnGoogleTile.addEventListener("click", () => {
+      this.setGoogleTile();
+    });
   },
   generateMarker: function (pictureDetail, imgSrc) {
     const { lon, lat } = this.getPointByPictureDetail(pictureDetail);
@@ -320,6 +330,14 @@ var pageControl = {
       ${coordHtml}
     `;
     //alert('您在[ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ]的位置点击了地图！');
+  },
+  //设置高德瓦片
+  setAMapTile() {
+    this.map.remove(this.googleLayer);
+  },
+  //设置谷歌瓦片
+  setGoogleTile() {
+    this.map.add(this.googleLayer);
   },
 };
 function initializegooglemap() {
