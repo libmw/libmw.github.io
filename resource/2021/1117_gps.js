@@ -79,7 +79,7 @@ var pageControl = {
     });
 
     const testGoogleImage = new Image();
-    testGoogleImage.src = `//mt2.google.com/vt/lyrs=s&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil`;
+    testGoogleImage.src = `//mt2.google.com/vt/lyrs=s&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil?t=${+Math.random()}`;
     testGoogleImage.onload = () => {
       map.add([googleLayerWithPio]);
     };
