@@ -30,12 +30,15 @@
     height:100%;
   }
 
-  .fullscreen-btn{
+  .tools{
     position: absolute;
     z-index: 1;
     color: #e6e6e6;
     font-weight: 400;
     cursor: pointer;
+  }
+  .fullscreen-btn{
+    
   }
 
   .picker {
@@ -98,7 +101,13 @@
   <h2>把图片拖进来</h2>
   <div class="container">
     <div class="map-ctn" id="mapCtn">
-      <div class="fullscreen-btn">全屏</div>
+      <div class="tools">
+        <div class="fullscreen-btn">全屏</div>
+        <label for="roadBtn">路网</label>
+        <input type="checkbox" id="roadBtn" />
+        <label for="googlePioBtn">谷歌标注</label>
+        <input type="checkbox" checked id="googlePioBtn" />
+      </div>
     </div>
   </div>
   <div id="makeAndModel" style="height: 30px; "></div>

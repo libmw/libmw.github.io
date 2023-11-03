@@ -18,6 +18,9 @@ var pageControl = {
     const fullBtn = $(".fullscreen-btn");
     const btnAmapTile = $("#btnAmapTile");
     const btnGoogleTile = $("#btnGoogleTile");
+    const roadBtn = $("#roadBtn");
+    const googlePioBtn = $("#googlePioBtn");
+    var roadNetLayer = new AMap.TileLayer.RoadNet();
 
     fullBtn.addEventListener("click", () => {
       $(".container").classList.toggle("fullscreen");
@@ -33,12 +36,36 @@ var pageControl = {
       });
     });
 
-    const googleLayer = new AMap.TileLayer({
+    roadBtn.addEventListener("click", (e) => {
+      if (roadBtn.checked) {
+        map.add(roadNetLayer);
+      } else {
+        map.remove(roadNetLayer);
+      }
+    });
+
+    googlePioBtn.addEventListener("click", (e) => {
+      if (googlePioBtn.checked) {
+        map.add(googleLayerWithPio);
+        map.remove(googleLayerPure);
+      } else {
+        map.remove(googleLayerWithPio);
+        map.add(googleLayerPure);
+      }
+    });
+
+    const googleLayerPure = new AMap.TileLayer({
+      tileUrl:
+        "http://mt2.google.com/vt/lyrs=s&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
+      zIndex: 3,
+    });
+    const googleLayerWithPio = new AMap.TileLayer({
       tileUrl:
         "http://mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
       zIndex: 3,
     });
-    this.googleLayer = googleLayer;
+    this.googleLayerPure = googleLayerPure;
+    this.googleLayerWithPio = googleLayerWithPio;
 
     const amapSatelliteLayer = new AMap.TileLayer.Satellite();
     const amapRoadNetLayer = new AMap.TileLayer.RoadNet();
@@ -46,14 +73,17 @@ var pageControl = {
     const map = new AMap.Map(mapContainer, {
       resizeEnable: true,
       zoom: 15,
+      zooms: [2, 30],
       center: [116.397428, 39.90923],
+      layers: [new AMap.TileLayer.Satellite()]
     });
 
     const testGoogleImage = new Image();
-    testGoogleImage.src = `//mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil?t=${+Math.random()}`;
+    testGoogleImage.src = `//mt2.google.com/vt/lyrs=s&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil`;
     testGoogleImage.onload = () => {
-      map.add([googleLayer]);
+      map.add([googleLayerWithPio]);
     };
+    //map.add(roadNetLayer);
     /* var marker = new AMap.Marker({
       position: new AMap.LngLat(116.397428, 39.90923), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
       title: "北京",
@@ -334,11 +364,12 @@ var pageControl = {
   },
   //设置高德瓦片
   setAMapTile() {
-    this.map.remove(this.googleLayer);
+    this.map.remove(this.googleLayerWithPio);
+    this.map.remove(this.googleLayerPure);
   },
   //设置谷歌瓦片
   setGoogleTile() {
-    this.map.add(this.googleLayer);
+    this.map.add(this.googleLayerWithPio);
   },
 };
 function initializegooglemap() {
