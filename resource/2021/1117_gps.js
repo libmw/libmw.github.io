@@ -15,11 +15,13 @@ function gps2Google(gpsCoord) {
 var pageControl = {
   init: function () {
     const mapContainer = $("#mapCtn");
-    const fullBtn = $(".fullscreen");
+    const fullBtn = $(".fullscreen-btn");
     const btnAmapTile = $("#btnAmapTile");
     const btnGoogleTile = $("#btnGoogleTile");
 
     fullBtn.addEventListener("click", () => {
+      $(".container").classList.toggle("fullscreen");
+      return;
       if (document.fullscreenElement) {
         document.exitFullscreen();
         return;
@@ -36,7 +38,7 @@ var pageControl = {
         "http://mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
       zIndex: 3,
     });
-    this.googleLayer=googleLayer;
+    this.googleLayer = googleLayer;
 
     const amapSatelliteLayer = new AMap.TileLayer.Satellite();
     const amapRoadNetLayer = new AMap.TileLayer.RoadNet();
@@ -45,7 +47,6 @@ var pageControl = {
       resizeEnable: true,
       zoom: 15,
       center: [116.397428, 39.90923],
-      
     });
 
     const testGoogleImage = new Image();

@@ -26,7 +26,11 @@
     flex: 1;
   }
 
-  .fullscreen{
+  .map-ctn{
+    height:100%;
+  }
+
+  .fullscreen-btn{
     position: absolute;
     z-index: 1;
     color: #e6e6e6;
@@ -78,6 +82,13 @@
       display: block;
     }
   }
+  .fullscreen{
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+  }
 </style>
 <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=05fb23d2c6d3ce6323793cd981030e9f&plugin=AMap.Geocoder"></script>
 <script src="/resource/2018/exif.js"></script>
@@ -85,8 +96,10 @@
 
 <div class="gps-container">
   <h2>把图片拖进来</h2>
-  <div class="container" id="mapCtn">
-    <div class="fullscreen">全屏</div>
+  <div class="container">
+    <div class="map-ctn" id="mapCtn">
+      <div class="fullscreen-btn">全屏</div>
+    </div>
   </div>
   <div id="makeAndModel" style="height: 30px; "></div>
   <footer>
