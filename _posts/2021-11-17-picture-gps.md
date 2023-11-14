@@ -50,7 +50,7 @@
   }
 
   .buttons{
-    padding: 10px;
+    padding: 0 10px;
   }
   .buttons button{
       display: block;
@@ -103,18 +103,17 @@
     <div class="map-ctn" id="mapCtn">
       <div class="tools">
         <div class="fullscreen-btn">全屏</div>
-        <label for="roadBtn">路网</label>
-        <input type="checkbox" id="roadBtn" />
-        <label for="googlePioBtn">谷歌标注</label>
-        <input type="checkbox" checked id="googlePioBtn" />
       </div>
     </div>
   </div>
   <div id="makeAndModel" style="height: 30px; "></div>
   <footer>
     <div class="buttons">
-      <button id="btnAmapTile">高德瓦片</button>
-      <button id="btnGoogleTile">谷歌瓦片</button>
+      <h5>图层：</h5>
+      <p><input type="checkbox" id="btnAmapRoad" /><label for="btnAmapRoad">高德路网</label></p>
+      <p><input type="checkbox" id="btnAmapSatellite" /><label for="btnAmapSatellite">高德卫星</label></p>
+      <p><input type="checkbox" id="btnGoogleSatellite" /><label for="btnGoogleSatellite">谷歌带标注</label></p>
+      <p><input type="checkbox" id="btnGoogleSatellitePure" /><label for="btnGoogleSatellitePure">谷歌无标注</label></p>
     </div>
     <div class="detail" id="picDetail"></div>
     <div class="otherMsg"></div>

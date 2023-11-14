@@ -16,11 +16,42 @@ var pageControl = {
   init: function () {
     const mapContainer = $("#mapCtn");
     const fullBtn = $(".fullscreen-btn");
-    const btnAmapTile = $("#btnAmapTile");
-    const btnGoogleTile = $("#btnGoogleTile");
-    const roadBtn = $("#roadBtn");
-    const googlePioBtn = $("#googlePioBtn");
-    var roadNetLayer = new AMap.TileLayer.RoadNet();
+
+    const layerControls = [
+      {
+        buttonId: "btnAmapRoad",
+        layer: new AMap.TileLayer.RoadNet(),
+      },
+      {
+        buttonId: "btnAmapSatellite",
+        layer: new AMap.TileLayer.Satellite(),
+      },
+      {
+        buttonId: "btnGoogleSatellite",
+        layer: new AMap.TileLayer({
+          tileUrl:
+            "http://mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
+        }),
+      },
+      {
+        buttonId: "btnGoogleSatellitePure",
+        layer: new AMap.TileLayer({
+          tileUrl:
+            "http://mt2.google.com/vt/lyrs=s&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
+        }),
+      },
+    ];
+
+    layerControls.forEach((item) => {
+      const btn = $("#" + item.buttonId);
+      btn.addEventListener("click", (e) => {
+        if (btn.checked) {
+          map.add(item.layer);
+        } else {
+          map.remove(item.layer);
+        }
+      });
+    });
 
     fullBtn.addEventListener("click", () => {
       $(".container").classList.toggle("fullscreen");
@@ -36,61 +67,19 @@ var pageControl = {
       });
     });
 
-    roadBtn.addEventListener("click", (e) => {
-      if (roadBtn.checked) {
-        map.add(roadNetLayer);
-      } else {
-        map.remove(roadNetLayer);
-      }
-    });
-
-    googlePioBtn.addEventListener("click", (e) => {
-      if (googlePioBtn.checked) {
-        map.add(googleLayerWithPio);
-        map.remove(googleLayerPure);
-      } else {
-        map.remove(googleLayerWithPio);
-        map.add(googleLayerPure);
-      }
-    });
-
-    const googleLayerPure = new AMap.TileLayer({
-      tileUrl:
-        "http://mt2.google.com/vt/lyrs=s&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
-      zIndex: 3,
-    });
-    const googleLayerWithPio = new AMap.TileLayer({
-      tileUrl:
-        "http://mt2.google.com/vt/lyrs=y&hl=zh-CN&gl=cn&x=[x]&y=[y]&z=[z]&s=Galil",
-      zIndex: 3,
-    });
-    this.googleLayerPure = googleLayerPure;
-    this.googleLayerWithPio = googleLayerWithPio;
-
-    const amapSatelliteLayer = new AMap.TileLayer.Satellite();
-    const amapRoadNetLayer = new AMap.TileLayer.RoadNet();
-
     const map = new AMap.Map(mapContainer, {
       resizeEnable: true,
       zoom: 15,
       zooms: [2, 30],
       center: [116.397428, 39.90923],
-      layers: [new AMap.TileLayer.Satellite()]
+      layers: [],
     });
 
-    const testGoogleImage = new Image();
+    /* const testGoogleImage = new Image();
     testGoogleImage.src = `//mt2.google.com/vt/lyrs=s&hl=zh-CN&gl=cn&x=17294&y=15469&z=15&s=Galil?t=${+Math.random()}`;
     testGoogleImage.onload = () => {
       map.add([googleLayerWithPio]);
-    };
-    //map.add(roadNetLayer);
-    /* var marker = new AMap.Marker({
-      position: new AMap.LngLat(116.397428, 39.90923), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-      title: "北京",
-    }); */
-
-    // 将创建的点标记添加到已有的地图实例：
-    // map.add(marker);
+    }; */
 
     this.map = map;
     const _this = this;
@@ -118,12 +107,6 @@ var pageControl = {
     //点击地图显示坐标
     map.on("click", this.onMapClick);
 
-    btnAmapTile.addEventListener("click", () => {
-      this.setAMapTile();
-    });
-    btnGoogleTile.addEventListener("click", () => {
-      this.setGoogleTile();
-    });
   },
   generateMarker: function (pictureDetail, imgSrc) {
     const { lon, lat } = this.getPointByPictureDetail(pictureDetail);
