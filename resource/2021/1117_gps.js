@@ -106,7 +106,6 @@ var pageControl = {
     //this.changeMapTo('baidu');
     //点击地图显示坐标
     map.on("click", this.onMapClick);
-
   },
   generateMarker: function (pictureDetail, imgSrc) {
     const { lon, lat } = this.getPointByPictureDetail(pictureDetail);
